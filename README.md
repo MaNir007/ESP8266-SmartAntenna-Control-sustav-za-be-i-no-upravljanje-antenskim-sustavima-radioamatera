@@ -1,65 +1,115 @@
-ESP8266 SmartAntenna Control
-Sustav za bežično upravljanje antenskim sustavima radioamatera.
+# 📡 ESP8266 SmartAntenna Control
+### Sustav za bežično upravljanje antenskim sustavima radioamatera (Remote Antenna Switch)
 
-Ovaj projekt omogućuje daljinsko upravljanje antenskim preklopnicima, rotatorima ili drugim elementima antenskog sustava koristeći ESP8266 mikrokontroler. Sustav je dizajniran kako bi radioamaterima olakšao rad putem intuitivnog web sučelja dostupnog s bilo kojeg uređaja unutar lokalne mreže.
+**ESP8266 SmartAntenna Control** je modularni sustav koji omogućuje daljinsko upravljanje antenskim preklopnicima, rotatorima i drugim elementima antenskog sustava pomoću ESP8266 mikrokontrolera.  
+Projekt je namijenjen radioamaterima koji žele **pouzdano, sigurno i jednostavno upravljanje antenama** putem web sučelja, dostupnog s računala, mobitela ili tableta unutar lokalne mreže.  
+Sustav je pogodan kako za **fiksne postaje**, tako i za **terenski rad (POTA / SOTA / portable)**.
 
-🚀 Glavne značajke
-Web sučelje: Upravljanje putem preglednika (mobitel, tablet, PC).
+---
 
-Bežična povezivost: Radi preko postojeće Wi-Fi mreže ili kao samostalna pristupna točka (Access Point).
+## 🚀 Glavne značajke
 
-Modularnost: Mogućnost proširenja za upravljanje više različitih antena ili releja.
+- 🌐 **Web sučelje**  
+  Intuitivno, responzivno web sučelje za upravljanje relejima jednim klikom.
 
-Niska latencija: Brza odzivnost sustava ključna za natjecanja (contesting).
+- 📶 **Dva načina rada**
+  - **Station Mode** – spajanje na postojeću kućnu Wi-Fi mrežu  
+  - **Access Point (AP) Mode** – ESP8266 stvara vlastitu Wi-Fi mrežu (idealno za teren)
 
-OTA (Over-The-Air) ažuriranje: Mogućnost nadogradnje softvera bez fizičkog spajanja na računalo.
+- 🔄 **Status u realnom vremenu**  
+  Trenutno aktivna antena prikazana je istovremeno na svim povezanim uređajima.
 
-🛠 Hardverski zahtjevi
-Za sastavljanje sustava potrebne su sljedeće komponente:
+- 🔒 **Interlock zaštita**  
+  Softverska zaštita koja sprječava istovremeno uključivanje više antena.
 
-Mikrokontroler: ESP8266 (npr. NodeMCU ili Wemos D1 Mini).
+- 🔄 **OTA (Over-The-Air) ažuriranje**  
+  Bežično ažuriranje firmvera bez USB kabela.
 
-Relejni modul: 4-kanalni ili 8-kanalni relejni modul (ovisno o broju antena).
+---
 
-Napajanje: 5V DC (za ESP8266 i releje).
+## 🛠 Hardverska specifikacija
 
-Kućište: Zaštitno kućište prilagođeno radu u RF okruženju.
+| Komponenta | Preporučeni model | Napomena |
+|-----------|------------------|---------|
+| MCU | ESP8266 (NodeMCU / D1 Mini) | 80 MHz / 160 MHz |
+| Releji | 4- ili 8-kanalni relejni modul | Opto-izolirani (preporučeno) |
+| Napajanje | 5 V DC (min. 1 A) | Ovisi o broju releja |
+| RF zaštita | Metalno kućište + feriti | Ključno za rad blizu predajnika |
 
-💻 Instalacija i postavljanje
-Klonirajte repozitorij:
+---
 
-Bash
+## 🔌 Shema spajanja (primjer)
 
-git clone https://github.com/MaNir007/ESP8266-SmartAntenna-Control-sustav-za-be-i-no-upravljanje-antenskim-sustavima-radioamatera.git
-Arduino IDE postavke:
+GND → GND relejnog modula
+D1 → GPIO5 → Relej 1 (Antena 1)
+D2 → GPIO4 → Relej 2 (Antena 2)
+D5 → GPIO14 → Relej 3 (Antena 3)
+D6 → GPIO12 → Relej 4 (Antena 4)
 
-Instalirajte Arduino IDE.
+> ⚠️ Preporučuje se korištenje kratkih vodiča, feritnih prstenova i odvojenog napajanja.
 
-Dodajte ESP8266 podršku putem Board Managera.
+---
 
-Instalirajte potrebne biblioteke (npr. ESP8266WiFi, ESP8266WebServer).
+## 💻 Instalacija i programiranje
 
-Konfiguracija:
+### 1️⃣ Priprema razvojnog okruženja
 
-Otvorite .ino datoteku.
+U Arduino IDE (File → Preferences) dodajte sljedeći URL u *Additional Boards Manager URLs*:
+http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
-Unesite svoje Wi-Fi podatke (SSID i Password) u kodu.
 
-Upload:
+Zatim instalirajte **ESP8266 platformu** putem *Boards Managera*.
 
-Povežite ESP8266 na računalo i učitajte kod.
+---
 
-📡 Kako koristiti
-Nakon uspješnog učitavanja koda, otvorite Serial Monitor u Arduino IDE-u kako biste saznali IP adresu uređaja.
+### 2️⃣ Potrebne biblioteke
 
-Upišite IP adresu u svoj web preglednik (npr. http://192.168.1.50).
+- `ESP8266WiFi`  
+- `ESP8266WebServer`  
+- `ArduinoOTA` *(opcionalno, za OTA)*
 
-Upravljajte antenama putem gumba na ekranu.
+---
 
-⚠️ Sigurnosna napomena
-Pri radu s antenskim sustavima i visokim snagama (RF), osigurajte da su releji adekvatno izolirani i da sustav ima zajedničko uzemljenje kako bi se izbjegle smetnje ili oštećenja elektronike.
+### 3️⃣ Konfiguracija
 
-🤝 Doprinosi
-Doprinosi projektu su dobrodošli! Ako imate ideje za poboljšanje sučelja ili nove funkcionalnosti, slobodno otvorite Issue ili pošaljite Pull Request.
+-U datoteci `config.h` (ili na vrhu glavnog koda) prilagodite mrežne postavke:
+-const char* ssid = "VAS_WIFI_NAZIV";
+-const char* password = "VASA_LOZINKA";
 
-73 de [Tvoj Pozivni Znak ili Ime]
+###📡 Upotreba (Operation)
+
+##Pokretanje
+-Spojite sustav na napajanje.
+
+##Pristup web sučelju
+-U pregledniku otvorite IP adresu uređaja (npr. http://192.168.1.100).
+
+##Upravljanje antenama
+-Klikom na naziv antene (npr. Dipole 80 m, Yagi 20 m) sustav:
+-aktivira odabrani relej
+-automatski isključuje prethodnu antenu (ako je interlock uključen)
+
+###⚠️ Sigurnosne napomene (RF Safety)
+
+##📡 RF povratna sprega
+-Koristite blok kondenzatore (100 nF) i feritne jezgre na signalnim i naponskim vodovima, posebno pri većim izlaznim snagama.
+
+##⚡ Radni napon releja
+-Ako upravljate koaksijalnim relejima na 12V ili 24V, provjerite kompatibilnost i izolaciju.
+
+###🖼 Slike
+-Naziv	Opis	Putanja
+-Web Interface	Responzivno web sučelje za upravljanje antenama	docs/images/web_interface.png
+-Antenna Setup	Prikaz spajanja releja i antena	docs/images/antenna_setup.png
+-System Block Diagram	Blok shema ESP8266 SmartAntenna Control sustava	docs/images/block_diagram.png
+###🤝 Doprinosi i kontakt
+
+-Slobodno otvorite Issue ili Pull Request ako želite doprinijeti projektu.
+
+###👤 Autor
+
+-ESP8266 SmartAntenna Control
+-Radioamaterski projekt
+
+##73 de 9A5AGN
+
