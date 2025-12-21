@@ -40,11 +40,11 @@ Sustav je pogodan kako za **fiksne postaje**, tako i za **terenski rad (POTA / S
 
 ## 🔌 Shema spajanja (primjer)
 
-GND → GND relejnog modula
-D1 → GPIO5 → Relej 1 (Antena 1)
-D2 → GPIO4 → Relej 2 (Antena 2)
-D5 → GPIO14 → Relej 3 (Antena 3)
-D6 → GPIO12 → Relej 4 (Antena 4)
+- GND → GND relejnog modula
+- D1 → GPIO5 → Relej 1 (Antena 1)
+- D2 → GPIO4 → Relej 2 (Antena 2)
+- D5 → GPIO14 → Relej 3 (Antena 3)
+- D6 → GPIO12 → Relej 4 (Antena 4)
 
 > ⚠️ Preporučuje se korištenje kratkih vodiča, feritnih prstenova i odvojenog napajanja.
 
@@ -72,44 +72,43 @@ Zatim instalirajte **ESP8266 platformu** putem *Boards Managera*.
 
 ### 3️⃣ Konfiguracija
 
--U datoteci `config.h` (ili na vrhu glavnog koda) prilagodite mrežne postavke:
--const char* ssid = "VAS_WIFI_NAZIV";
--const char* password = "VASA_LOZINKA";
+- U datoteci `config.h` (ili na vrhu glavnog koda) prilagodite mrežne postavke:
+- `const char* ssid = "VAS_WIFI_NAZIV";`
+- `const char* password = "VASA_LOZINKA";`
 
-###📡 Upotreba (Operation)
+## 📡 Upotreba (Operation)
 
-##Pokretanje
--Spojite sustav na napajanje.
+### Pokretanje
+- Spojite sustav na napajanje.
 
-##Pristup web sučelju
--U pregledniku otvorite IP adresu uređaja (npr. http://192.168.1.100).
+### Pristup web sučelju
+- U pregledniku otvorite IP adresu uređaja (npr. http://192.168.1.100).
 
-##Upravljanje antenama
--Klikom na naziv antene (npr. Dipole 80 m, Yagi 20 m) sustav:
--aktivira odabrani relej
--automatski isključuje prethodnu antenu (ako je interlock uključen)
+### Upravljanje antenama
+- Klikom na naziv antene (npr. Dipole 80 m, Yagi 20 m) sustav:
+- aktivira odabrani relej
+- automatski isključuje prethodnu antenu (ako je interlock uključen)
 
-###⚠️ Sigurnosne napomene (RF Safety)
+## ⚠️ Sigurnosne napomene (RF Safety)
 
-##📡 RF povratna sprega
+### 📡 RF povratna sprega
 -Koristite blok kondenzatore (100 nF) i feritne jezgre na signalnim i naponskim vodovima, posebno pri većim izlaznim snagama.
 
-##⚡ Radni napon releja
+### ⚡ Radni napon releja
 -Ako upravljate koaksijalnim relejima na 12V ili 24V, provjerite kompatibilnost i izolaciju.
 
-###🖼 Slike
+## 🖼 Slike
 -Naziv	Opis	Putanja
 -Web Interface	Responzivno web sučelje za upravljanje antenama	docs/images/web_interface.png
 -Antenna Setup	Prikaz spajanja releja i antena	docs/images/antenna_setup.png
 -System Block Diagram	Blok shema ESP8266 SmartAntenna Control sustava	docs/images/block_diagram.png
-###🤝 Doprinosi i kontakt
 
+## 🤝 Doprinosi i kontakt
 -Slobodno otvorite Issue ili Pull Request ako želite doprinijeti projektu.
 
-###👤 Autor
-
+### 👤 Autor
 -ESP8266 SmartAntenna Control
 -Radioamaterski projekt
 
-##73 de 9A5AGN
+# 73 de 9A5AGN
 
