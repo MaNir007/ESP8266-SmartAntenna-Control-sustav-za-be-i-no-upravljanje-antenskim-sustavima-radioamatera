@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartAntenna Control – sustav za bežično upravljanje antenskim sustavima radioamatera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Kontrolno sučelje za antenski sustav s koračnim motorom i logiranjem veza.">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="common.css"> 
+    <link rel="stylesheet" href="index.css"> 
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-satellite-dish"></i> SmartAntenna Control – sustav za bežično upravljanje antenskim sustavima radioamatera</h1>
+            <p class="current-time">Status veze: <span id="connectionStatus" class="status-connecting"><i class="fas fa-circle-notch fa-spin"></i> Povezivanje...</span></p>
+        </header>
+
+        <main>
+            <section class="card" aria-labelledby="antennaControlHeading">
+                <h2 id="antennaControlHeading"><i class="fas fa-signal"></i> Odabir Antene</h2>
+                <div class="antenna-selector">
+                    <button class="button btn-antenna" id="gpBtn" onclick="setAntenna('GP')">
+                        <i class="fas fa-arrow-up"></i> GP Antena
+                    </button>
+                    <button class="button btn-antenna" id="yagiBtn" onclick="setAntenna('Yagi')">
+                        <i class="fas fa-project-diagram"></i> Yagi Antena
+                    </button>
+                </div>
+                <div class="status-indicator">
+                    <div class="led" id="antennaLed"></div>
+                    <p>Trenutno aktivna: <span id="antennaStatus" class="highlight-text">N/A</span></p>
+                </div>
+            </section>
+
+            <section class="card" aria-labelledby="rotationControlHeading">
+                <h2 id="rotationControlHeading"><i class="fas fa-compass"></i> Rotacija Yagi Antene</h2>
+                <div class="compass-container">
+                    <div class="compass" aria-hidden="true">
+                        <div class="compass-rose"></div> 
+                        <div class="compass-arrow" id="compassArrow" style="transform: rotate(0deg);"></div>
+                        <div class="compass-degree" id="compassDegree">0°</div>
+                    </div>
+                    <div class="compass-controls">
+                        <label for="angleSlider">Podešavanje Kuta:</label>
+                        <input type="range" min="0" max="359" value="0" class="slider" id="angleSlider" 
+                               oninput="updateAngleDisplay(this.value)"
+                               onmouseup="setAngle(this.value)" 
+                               ontouchend="setAngle(this.value)"
+                               aria-valuemin="0" aria-valuemax="359" aria-valuenow="0">
+                        <div class="angle-input">
+                            <input type="number" id="angleInput" min="0" max="359" value="0">
+                            <span>°</span>
+                            <button id="rotateBtn" class="button secondary" onclick="sendAngleFromInput()">
+                                <i class="fas fa-sync-alt"></i> Rotiraj
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- <button class="button tertiary" onclick="calibrateServo()" title="Postavlja trenutnu fizičku poziciju kao 0° (Sjever)">
+                    <span class="icon">📍</span> Postavi trenutno kao 0° (Sjever)
+                </button> -->
+            </section>
+
+            <section class="card sensor-data" aria-labelledby="sensorDataHeading">
+                <h2 id="sensorDataHeading"><i class="fas fa-thermometer-half"></i> Senzorski Podaci</h2>
+                <div class="sensor-grid">
+                    <div class="sensor-item">
+                        <span class="sensor-icon"><i class="fas fa-temperature-low"></i></span>
+                        <div>
+                            <p class="sensor-label">Temperatura</p>
+                            <p class="sensor-value"><span id="temperature">--</span> °C</p>
+                        </div>
+                    </div>
+                    <div class="sensor-item">
+                        <span class="sensor-icon"><i class="fas fa-tint"></i></span>
+                        <div>
+                            <p class="sensor-label">Vlažnost</p>
+                            <p class="sensor-value"><span id="humidity">--</span> %</p>
+                        </div>
+                    </div>
+                    <div class="sensor-item">
+                        <span class="sensor-icon"><i class="fas fa-bolt"></i></span>
+                        <div>
+                            <p class="sensor-label">Napajanje</p>
+                            <p class="sensor-value"><span id="voltage">--</span> V</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="button secondary" onclick="getSensorReadings()">
+                    <i class="fas fa-redo"></i> Osvježi Podatke
+                </button>
+            </section>
+            
+            <section class="card" aria-labelledby="loggerHeading">
+                <h2 id="loggerHeading"><i class="fas fa-book"></i> Logiranje Veza</h2>
+                <p>Upravljanje dnevnikom radio veza (QSO log).</p>
+                <button class="button primary" onclick="location.href='logger.html'">
+                    <i class="fas fa-edit"></i> Otvori Logger
+                </button>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="index.html"><i class="fas fa-home"></i> Početna</a>
+                    <a href="logger.html"><i class="fas fa-book"></i> Logger</a>
+                    <a href="mailto:supljikamarin1@gmail.com"><i class="fas fa-envelope"></i> Kontakt</a>
+                    <a href="https://github.com/MaNir007" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                </div>
+                <p class="copyright">&copy; 2025 Radio Amater Sustav. Sva prava pridržana.</p>
+                <p>Powered by <a href="http://marinsupljika.from.hr/" target="_blank">9A5AGN</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="common.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

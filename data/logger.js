@@ -1,0 +1,538 @@
+// logger.js - Skripte specifične za logger.html stranicu
+// Zahtijeva common.js za zajedničke funkcije
+
+// Globalna varijabla za spremanje logova (koristi se samo na logger stranici)
+let radioLogs = [];
+let isLoadingLogs = false; // Zastavica za sprječavanje višestrukih dohvaćanja logova
+let currentSearchTerm = ''; // Dodana varijabla za pamćenje trenutnog pojma za pretragu
+
+document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname;
+    const normalizedPath = path.endsWith('/') ? path.slice(0, -1) : path.replace('.html', '');
+
+    if (normalizedPath === '/logger') {
+        onLoadLogger();
+    }
+
+    // `updateConnectionStatus` je pretpostavljena funkcija iz common.js
+    // Pozivamo je ovdje da osiguramo da se status postavi pri učitavanju
+    // PREPORUKA: Ovaj dio se može ukloniti ako više ne prikazuješ status konekcije u headeru za GPS.
+    // Ako updateConnectionStatus služi samo za UTC vrijeme, ostavi.
+    if (typeof updateConnectionStatus === 'function') {
+        updateConnectionStatus('connected'); // Pretpostavljamo da je inicijalno povezan
+    } else {
+        console.warn("Funkcija updateConnectionStatus nije pronađena. Provjerite common.js.");
+    }
+});
+
+/**
+ * Funkcija koja se poziva pri učitavanju logger stranice.
+ * Inicijalizira UI elemente i postavlja periodično osvježavanje.
+ */
+async function onLoadLogger() {
+    // Provjera postojanja funkcija iz common.js
+    // calculateQthLocator NIJE VIŠE POTREBAN OVDJE jer se ne koristi za auto-dohvaćanje
+    // updateConnectionStatus je upitan, ovisno o common.js
+    if (typeof getUtcTime === 'undefined' || typeof sendHttpRequest === 'undefined' || typeof showFormMessage === 'undefined' || typeof downloadFile === 'undefined') {
+        console.error("Neke od očekivanih funkcija iz common.js nisu definirane. Provjerite da li je common.js ispravno učitan.");
+        showFormMessage('Greška: Neki dijelovi aplikacije neće raditi ispravno. Provjerite common.js.', 'error', 0); // Prikaz trajne poruke
+        return; // Prekini izvršavanje ako ključne funkcije nedostaju
+    }
+
+    await getUtcTime();
+    await getLogs(); // Dohvaća logove odmah pri učitavanju
+
+    // Uklonjeno: getEspGpsData poziv
+    // Uklonjeno: setInterval za getEspGpsData
+
+    setInterval(getUtcTime, 1000); // Osvježava UTC vrijeme svake sekunde
+
+    const logForm = document.getElementById('logForm');
+    if (logForm) {
+        logForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addLogEntry();
+        });
+    }
+
+    // Uklonjeno: Event listener za getLocationBtn jer je gumb uklonjen
+    // const getLocationBtn = document.querySelector('.form-actions button.secondary[aria-label="Dohvati trenutnu GPS lokaciju i QTH lokator"]');
+    // if (getLocationBtn) {
+    //     getLocationBtn.addEventListener('click', getLocationAndQth);
+    // }
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        // Debounce search input to prevent excessive filtering
+        let searchTimeout;
+        searchInput.addEventListener('keyup', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearchTerm = searchInput.value.toLowerCase().trim(); // Ažuriraj globalni pojam
+                filterLogs();
+            }, 300); // Filtriraj nakon 300ms neaktivnosti tipkanja
+        });
+    }
+
+    const clearAllLogsBtn = document.querySelector('.table-footer .button.tertiary[aria-label="Obriši sve logove"]');
+    if (clearAllLogsBtn) {
+        clearAllLogsBtn.addEventListener('click', confirmClearAllLogs);
+    }
+
+    const exportADIFBtn = document.querySelector('.table-footer .button.secondary[aria-label="Izvezi sve logove u ADIF format"]');
+    if (exportADIFBtn) {
+        exportADIFBtn.addEventListener('click', exportToADIF);
+    }
+
+    const exportCSVBtn = document.querySelector('.table-footer .button[aria-label="Izvezi sve logove u CSV format"]');
+    if (exportCSVBtn) {
+        exportCSVBtn.addEventListener('click', exportToCSV);
+    }
+
+    const modulationSelect = document.getElementById('modulation');
+    if (modulationSelect) {
+        modulationSelect.addEventListener('change', updateRSTDefault);
+        updateRSTDefault(); // Postavi defaultne RST vrijednosti na početku
+    }
+
+    // Dodaj event listener za gumb "Osvježi Logove" ako postoji
+    const refreshLogsButton = document.getElementById('refreshLogsButton'); // Pretpostavi da imaš ovakav gumb u HTML-u
+    if (refreshLogsButton) {
+        refreshLogsButton.addEventListener('click', async () => {
+            currentSearchTerm = ''; // Očisti pojam za pretragu pri ručnom osvježavanju
+            if (searchInput) searchInput.value = ''; // Očisti i input polje
+            await getLogs(); // Dohvati sve logove ponovno
+        });
+    }
+}
+
+/**
+ * Dohvaća UTC vrijeme s ESP-a i ažurira prikaz.
+ */
+async function getUtcTime() {
+    try {
+        // Dodajemo /api/ ispred jer ESP sluša na tim rutama
+        const data = await sendHttpRequest('/api/utc_time'); 
+        const utcTimeElement = document.getElementById('utcTime');
+        
+        if (utcTimeElement) {
+            // Provjeravamo šalje li ESP pod ključem "time" ili "utc_time"
+            const timeStr = data.time || data.utc_time || 'N/A';
+            utcTimeElement.innerText = timeStr + " UTC";
+            utcTimeElement.setAttribute('datetime', timeStr);
+        }
+    } catch (e) {
+        console.error("Greška pri dohvaćanju UTC vremena:", e);
+        const utcTimeElement = document.getElementById('utcTime');
+        if (utcTimeElement) utcTimeElement.innerText = "Veza prekinuta";
+    }
+}
+
+// Uklonjeno: getEspGpsData funkcija (cijela)
+// Uklonjeno: getLocationAndQth funkcija (cijela)
+// Uklonjeno: showPosition funkcija (cijela)
+// Uklonjeno: showError funkcija (cijela)
+
+// Uklonjeno: calculateQthLocator funkcija
+// OVA FUNKCIJA JE U COMMON.JS I TREBA BITI SAMO TAMO AKO SE UOPĆE KORISTI (npr. za izvoz u ADIF gdje se računa iz lat/lon)
+// Ako je ne koristiš nigdje drugdje, slobodno je izbriši.
+/*
+function calculateQthLocator(latitude, longitude) {
+    let locator = "";
+    // ... tvoj kod za QTH ...
+    return locator.toUpperCase();
+}
+*/
+
+/**
+ * Funkcija za dodavanje novog loga, šalje ga na ESP putem HTTP POST-a.
+ */
+async function addLogEntry() {
+    const form = document.getElementById('logForm');
+    if (!form) return;
+
+    const callsignInput = document.getElementById('callsign');
+    const callsign = callsignInput.value.trim().toUpperCase();
+    const callsignPattern = /^[A-Z0-9\/]{3,15}$/;
+
+    if (!callsignPattern.test(callsign)) {
+        showFormMessage('Molimo unesite valjanu pozivnu oznaku (npr. 9A1AA, F/9A5AGN/P). Minimalno 3 znaka, dozvoljeni su brojevi i "/". Maksimalno 15 znakova.', 'error');
+        callsignInput.focus();
+        return;
+    }
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        showFormMessage('Molimo popunite sva obavezna polja ispravno.', 'error');
+        return;
+    }
+
+    let frequencyValue = document.getElementById('frequency').value;
+    const frequency = isNaN(parseFloat(frequencyValue)) ? 0.0 : parseFloat(frequencyValue);
+    
+    const name = document.getElementById('name').value.trim(); // Ovdje dohvaća Ime
+    const modulation = document.getElementById('modulation').value;
+    const rstSent = document.getElementById('rstSent').value.trim(); // Ovdje dohvaća RST Sent
+    const rstReceived = document.getElementById('rstReceived').value.trim(); // Ovdje dohvaća RST Received
+    // Uklonjeno: const location = document.getElementById('location').value.trim();
+    const qthlocator = document.getElementById('qthlocator').value.trim().toUpperCase();
+    const notes = document.getElementById('notes').value.trim();
+    const utcTimeElement = document.getElementById('utcTime');
+    // Uzimamo samo datum i vrijeme iz teksta, a ne iz atributa datetime
+    const timestamp = utcTimeElement ? utcTimeElement.textContent.split(' UTC')[0].trim() : new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const newLog = {
+        time: timestamp,
+        callsign: callsign,
+        name: name, // Dodaje Ime u JSON objekt
+        frequency: frequency,
+        modulation: modulation,
+        rstSent: rstSent, // Dodaje RST Sent u JSON objekt
+        rstReceived: rstReceived, // Dodaje RST Received u JSON objekt
+        // Uklonjeno: location: location,
+        qthlocator: qthlocator,
+        notes: notes
+    };
+
+    try {
+        await sendHttpRequest('/save_log', 'POST', newLog);
+        form.reset();
+        callsignInput.setCustomValidity('');
+        showFormMessage('Log uspješno spremljen!', 'success');
+        // Uklonjeno: await getEspGpsData(false); - više ne treba ažurirati GPS nakon spremanja
+        await getLogs(); // Ponovno dohvati i prikaži logove nakon dodavanja
+    } catch (e) {
+        console.error("Greška pri spremanju loga:", e);
+        showFormMessage('Greška pri spremanju loga. Provjerite konzolu za više detalja.', 'error');
+    }
+}
+
+/**
+ * Funkcija za prikaz logova u tablici.
+ * @param {Array<object>} logs - Niz objekata logova.
+ */
+function displayLogs(logs) {
+    const tbody = document.querySelector('#logTable tbody');
+    const noLogsMessage = document.getElementById('noLogsMessage');
+    const exportADIFBtn = document.querySelector('.table-footer .button.secondary[aria-label="Izvezi sve logove u ADIF format"]');
+    const clearAllLogsBtn = document.querySelector('.table-footer .button.tertiary[aria-label="Obriši sve logove"]');
+    const exportCSVBtn = document.querySelector('.table-footer .button[aria-label="Izvezi sve logove u CSV format"]');
+
+    if (!tbody || !noLogsMessage || !exportADIFBtn || !clearAllLogsBtn || !exportCSVBtn) {
+        console.warn("Neki potrebni elementi (tablica, poruka ili gumbi) nisu pronađeni u DOM-u. Provjerite logger.html.");
+        return;
+    }
+
+    radioLogs = logs;
+    filterLogs(false);
+}
+
+/**
+ * Funkcija za dobivanje logova s ESP-a putem HTTP GET-a.
+ * Ažurira globalnu `radioLogs` varijablu i prikazuje ih u tablici.
+ */
+async function getLogs() {
+    if (isLoadingLogs) return;
+
+    isLoadingLogs = true;
+    showLoadingIndicator(true);
+
+    try {
+        const data = await sendHttpRequest('/logs');
+        const logsToDisplay = Array.isArray(data) ? data : (data.logs || data.logovi || []);
+        
+        radioLogs = logsToDisplay;
+        filterLogs();
+
+        const noLogsMessage = document.getElementById('noLogsMessage');
+        const exportADIFBtn = document.querySelector('.table-footer .button.secondary[aria-label="Izvezi sve logove u ADIF format"]');
+        const clearAllLogsBtn = document.querySelector('.table-footer .button.tertiary[aria-label="Obriši sve logove"]');
+        const exportCSVBtn = document.querySelector('.table-footer .button[aria-label="Izvezi sve logove u CSV format"]');
+
+        if (radioLogs.length === 0) {
+            noLogsMessage.classList.remove('hidden');
+            if (exportADIFBtn) exportADIFBtn.style.display = 'none';
+            if (clearAllLogsBtn) clearAllLogsBtn.style.display = 'none';
+            if (exportCSVBtn) exportCSVBtn.style.display = 'none';
+        } else {
+            noLogsMessage.classList.add('hidden');
+            if (exportADIFBtn) exportADIFBtn.style.display = '';
+            if (clearAllLogsBtn) clearAllLogsBtn.style.display = '';
+            if (exportCSVBtn) exportCSVBtn.style.display = '';
+        }
+
+    } catch (e) {
+        console.error("Greška pri dohvaćanju logova:", e);
+        showFormMessage("Greška pri dohvaćanju logova. Provjerite konzolu.", 'error');
+        document.querySelector('#logTable tbody').innerHTML = '';
+        document.getElementById('noLogsMessage').classList.remove('hidden');
+        if (exportADIFBtn) exportADIFBtn.style.display = 'none';
+        if (clearAllLogsBtn) clearAllLogsBtn.style.display = 'none';
+        if (exportCSVBtn) exportCSVBtn.style.display = 'none';
+    } finally {
+        isLoadingLogs = false;
+        showLoadingIndicator(false);
+    }
+}
+
+/**
+ * Funkcija za pretraživanje/filtriranje logova na klijentskoj strani.
+ * Prikazuje samo one logove koji odgovaraju terminu pretrage.
+ */
+function filterLogs() {
+    const tbody = document.querySelector('#logTable tbody');
+    const noLogsMessage = document.getElementById('noLogsMessage');
+    if (!tbody || !noLogsMessage) return;
+
+    tbody.innerHTML = '';
+
+    const searchTerm = currentSearchTerm;
+
+    const filtered = radioLogs.filter(log => {
+        return (log.callsign && log.callsign.toLowerCase().includes(searchTerm)) ||
+               (log.name && log.name.toLowerCase().includes(searchTerm)) || // Uključuje pretragu po imenu
+               (log.qthlocator && log.qthlocator.toLowerCase().includes(searchTerm)) ||
+               (log.notes && log.notes.toLowerCase().includes(searchTerm)) ||
+               (log.time && log.time.toLowerCase().includes(searchTerm)) ||
+               (log.frequency && log.frequency.toString().includes(searchTerm)) ||
+               (log.modulation && log.modulation.toLowerCase().includes(searchTerm)) ||
+               (log.rstSent && log.rstSent.toLowerCase().includes(searchTerm)) || // Uključuje pretragu po RST Sent
+               (log.rstReceived && log.rstReceived.toLowerCase().includes(searchTerm))
+               // Uklonjeno: || (log.location && log.location.toLowerCase().includes(searchTerm))
+               ;
+    });
+
+    if (filtered.length === 0) {
+        noLogsMessage.classList.remove('hidden');
+    } else {
+        noLogsMessage.classList.add('hidden');
+        const fragment = document.createDocumentFragment();
+
+        filtered.forEach((log) => {
+            const row = document.createElement('tr');
+            const originalIndex = radioLogs.findIndex(item =>
+                item.time === log.time && item.callsign === log.callsign && item.frequency === log.frequency
+            );
+            row.dataset.originalIndex = originalIndex;
+
+            const cellTime = row.insertCell(0);
+            cellTime.textContent = log.time || 'N/A';
+            cellTime.setAttribute('data-label', 'Vrijeme (UTC)');
+
+            const cellCallsign = row.insertCell(1);
+            cellCallsign.textContent = log.callsign || 'N/A';
+            cellCallsign.setAttribute('data-label', 'Pozivna');
+
+            const cellName = row.insertCell(2);
+            cellName.textContent = log.name || ''; // Prikazuje Ime
+            cellName.setAttribute('data-label', 'Ime');
+
+            const cellFreq = row.insertCell(3);
+            cellFreq.textContent = log.frequency ? `${parseFloat(log.frequency).toFixed(3)} MHz` : 'N/A';
+            cellFreq.setAttribute('data-label', 'Frekvencija');
+
+            const cellMod = row.insertCell(4);
+            cellMod.textContent = log.modulation || 'N/A';
+            cellMod.setAttribute('data-label', 'Modulacija');
+
+            const cellRST = row.insertCell(5);
+            cellRST.textContent = `${log.rstSent || ''}/${log.rstReceived || ''}`; // Prikazuje RST (Sent/Received)
+            cellRST.setAttribute('data-label', 'RST');
+
+            const cellQTH = row.insertCell(6);
+            cellQTH.textContent = log.qthlocator || 'N/A';
+            cellQTH.setAttribute('data-label', 'QTH');
+
+            const cellNotes = row.insertCell(7);
+            cellNotes.textContent = log.notes || '';
+            cellNotes.setAttribute('data-label', 'Bilješke');
+
+            const actionsCell = row.insertCell(8);
+            actionsCell.setAttribute('data-label', 'Akcije');
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('button', 'small', 'danger');
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.title = `Obriši log za ${log.callsign || 'nepoznatu pozivnu oznaku'}`;
+            deleteButton.onclick = () => confirmDeleteLog(originalIndex);
+            actionsCell.appendChild(deleteButton);
+
+            fragment.appendChild(row);
+        });
+        tbody.appendChild(fragment);
+    }
+}
+
+/**
+ * Prikazuje ili skriva loading indikator za logove.
+ * Implementiraj CSS za #logLoadingIndicator.
+ * @param {boolean} show - True za prikaz, false za skrivanje.
+ */
+function showLoadingIndicator(show) {
+    const indicator = document.getElementById('logLoadingIndicator');
+    if (indicator) {
+        indicator.style.display = show ? 'block' : 'none';
+    }
+}
+
+
+/**
+ * Funkcija za brisanje pojedinačnog loga s potvrdom korisnika, šalje DELETE zahtjev ESP-u.
+ * @param {number} index - Indeks loga za brisanje u `radioLogs` nizu.
+ */
+async function confirmDeleteLog(index) {
+    if (index >= 0 && index < radioLogs.length) {
+        if (confirm(`Jeste li sigurni da želite obrisati log za "${radioLogs[index].callsign || 'ovu pozivnu oznaku'}"?`)) {
+            try {
+                // ESP očekuje GET s parametrom za delete_log, što je trenutno ok.
+                // Idealno bi bilo koristiti DELETE metodu, ali ako server ne podržava, GET s parametrom je fallback.
+                await sendHttpRequest(`/delete_log?index=${index}`, 'GET'); 
+                showFormMessage('Log uspješno obrisan!', 'success');
+                await getLogs();
+            } catch (e) {
+                console.error("Greška pri brisanju loga:", e);
+                showFormMessage("Greška pri brisanju loga. Provjerite konzolu.", 'error');
+            }
+        }
+    } else {
+        console.warn("Pokušaj brisanja loga s nevažećim indeksom:", index);
+        showFormMessage("Greška: Nevažeći indeks loga za brisanje.", 'error');
+    }
+}
+
+/**
+ * Funkcija za potvrdu brisanja svih logova, šalje DELETE zahtjev ESP-u.
+ */
+async function confirmClearAllLogs() {
+    if (radioLogs.length === 0) {
+        showFormMessage('Nema logova za brisanje.', 'warning');
+        return;
+    }
+    if (confirm("Jeste li sigurni da želite obrisati SVE radio logove? Ova radnja je nepovratna!")) {
+        try {
+            // ESP očekuje GET metodu, što je trenutno ok. Idealno bi bila DELETE.
+            await sendHttpRequest('/clear_all_logs', 'GET'); 
+            showFormMessage('Svi logovi su uspješno obrisani!', 'success');
+            await getLogs();
+        } catch (e) {
+            console.error("Greška pri brisanju svih logova:", e);
+            showFormMessage("Greška pri brisanju svih logova. Provjerite konzolu.", 'error');
+        }
+    }
+}
+
+/**
+ * Funkcija za izvoz logova u ADIF format.
+ */
+function exportToADIF() {
+    if (radioLogs.length === 0) {
+        showFormMessage('Nema logova za izvoz u ADIF format.', 'info');
+        return;
+    }
+
+    let adifContent = "";
+    adifContent += "ADIF Exported by 9A5AGN Radio Logger\n";
+    adifContent += "<adif_ver:5>3.1.4 <programid:12>Radio Logger <eoh>\n\n";
+
+    radioLogs.forEach(log => {
+        const callsign = log.callsign || "";
+        const name = log.name || "";
+        const frequency = log.frequency ? parseFloat(log.frequency).toFixed(3) : "";
+        const modulation = log.modulation || "";
+        const rstSent = log.rstSent || "";
+        const rstReceived = log.rstReceived || "";
+        const qthlocator = log.qthlocator || "";
+        const notes = log.notes || "";
+        const timeOn = log.time ? log.time.substring(11, 16).replace(/:/g, '') : "";
+        const qsoDate = log.time ? log.time.substring(0, 10).replace(/-/g, '') : "";
+
+        adifContent += `<CALL:${callsign.length}>${callsign}\n`;
+        if (name) adifContent += `<NAME:${name.length}>${name}\n`;
+        adifContent += `<FREQ:${frequency.length}>${frequency}\n`;
+        adifContent += `<MODE:${modulation.length}>${modulation}\n`;
+        adifContent += `<RST_SENT:${rstSent.length}>${rstSent}\n`;
+        adifContent += `<RST_RCVD:${rstReceived.length}>${rstReceived}\n`;
+        adifContent += `<QSO_DATE:${qsoDate.length}>${qsoDate}\n`;
+        adifContent += `<TIME_ON:${timeOn.length}>${timeOn}\n`;
+        if (qthlocator) {
+            adifContent += `<GRIDSQUARE:${qthlocator.length}>${qthlocator}\n`;
+        }
+        // Uklonjeno: if (log.location) dio za LAT/LON u ADIF-u, jer više nema polja 'location'
+        // ako želite izračunati iz QTH lokatora, morali biste implementirati inverznu funkciju.
+        // Trenutno, ako nema automatskog dohvata Lat/Lon, ne možemo ih izvesti.
+        if (notes) {
+            adifContent += `<COMMENT:${notes.length}>${notes}\n`;
+        }
+        adifContent += `<EOR>\n`;
+    });
+
+    downloadFile(adifContent, `radio_logs_${new Date().toISOString().slice(0, 10)}.adif`, "application/adif");
+    showFormMessage('Logovi izvezeni u ADIF format!', 'success');
+}
+
+/**
+ * Funkcija za izvoz logova u CSV format.
+ */
+function exportToCSV() {
+    if (radioLogs.length === 0) {
+        showFormMessage('Nema logova za izvoz u CSV format.', 'info');
+        return;
+    }
+
+    // Dodana "Ime", "RST Poslano", "RST Primljeno" u zaglavlje CSV-a
+    let csvContent = "Vrijeme UTC,Pozivna Oznaka,Ime,Frekvencija (MHz),Modulacija,RST Poslano,RST Primljeno,QTH Lokator,Bilješke\n";
+
+    radioLogs.forEach(log => {
+        const time = `"${log.time || ''}"`;
+        const callsign = `"${(log.callsign || '').replace(/"/g, '""')}"`;
+        const name = `"${(log.name || '').replace(/"/g, '""')}"`; // Uključuje Ime
+        const frequency = `"${log.frequency || ''}"`;
+        const modulation = `"${(log.modulation || '').replace(/"/g, '""')}"`;
+        const rstSent = `"${(log.rstSent || '').replace(/"/g, '""')}"`; // Uključuje RST Sent
+        const rstReceived = `"${(log.rstReceived || '').replace(/"/g, '""')}"`; // Uključuje RST Received
+        const qthlocator = `"${(log.qthlocator || '').replace(/"/g, '""')}"`;
+        const notes = `"${(log.notes || '').replace(/"/g, '""')}"`;
+        // const location = `"${(log.location || '').replace(/"/g, '""')}"`; // Uklonjeno
+
+        csvContent += `${time},${callsign},${name},${frequency},${modulation},${rstSent},${rstReceived},${qthlocator},${notes}\n`;
+    });
+
+    downloadFile(csvContent, `radio_logs_${new Date().toISOString().slice(0, 10)}.csv`, "text/csv");
+    showFormMessage('Logovi izvezeni u CSV format!', 'success');
+}
+
+// Funkcija za postavljanje defaultnih RST vrijednosti ovisno o modulaciji
+function updateRSTDefault() {
+    const modulation = document.getElementById('modulation').value;
+    const rstSentInput = document.getElementById('rstSent');
+    const rstReceivedInput = document.getElementById('rstReceived');
+
+    if (!rstSentInput || !rstReceivedInput) {
+        console.warn("Input polja za RST Sent/Received nisu pronađena. Provjerite logger.html.");
+        return;
+    }
+
+    if (modulation === 'CW') {
+        rstSentInput.value = '599';
+        rstReceivedInput.value = '599';
+        rstSentInput.pattern = "^[1-5][0-9][0-9]$"; // CW pattern
+        rstReceivedInput.pattern = "^[1-5][0-9][0-9]$"; // CW pattern
+        rstSentInput.title = "Unesite valjan RST (npr. 599).";
+        rstReceivedInput.title = "Unesite valjan RST (npr. 599).";
+    } else if (modulation === 'FT8' || modulation === 'FT4' || modulation === 'DIGITAL' || modulation === 'RTTY') {
+        rstSentInput.value = '-10'; // Primjer za digitalne modove
+        rstReceivedInput.value = '-10'; // Primjer za digitalne modove
+        // Dodaj pattern za digitalne modove, npr. omogućiti + ili - i brojeve
+        rstSentInput.pattern = "^[+-]?[0-9]{1,2}$"; // Npr. -10, +05, 01
+        rstReceivedInput.pattern = "^[+-]?[0-9]{1,2}$"; // Npr. -10, +05, 01
+        rstSentInput.title = "Unesite valjan RST (npr. -10, +05).";
+        rstReceivedInput.title = "Unesite valjan RST (npr. -10, +05).";
+    } else { // SSB, FM, AM, OTHER
+        rstSentInput.value = '59';
+        rstReceivedInput.value = '59';
+        rstSentInput.pattern = "^[1-5][0-9]$"; // SSB/FM pattern
+        rstReceivedInput.pattern = "^[1-5][0-9]$"; // SSB/FM pattern
+        rstSentInput.title = "Unesite valjan RST (npr. 59).";
+        rstReceivedInput.title = "Unesite valjan RST (npr. 59).";
+    }
+}

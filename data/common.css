@@ -1,0 +1,454 @@
+/* common.css - Globalni stilovi i varijable za cijelu aplikaciju */
+
+/* Uvoz Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Osnovne varijable za boje i razmake */
+:root {
+    --primary-color: #3498db; /* Svijetlo plava */
+    --primary-color-rgb: 52, 152, 219; /* RGB za primarnu boju (za rgba sjene) */
+    --secondary-color: #27ae60; /* Tamno zelena (prethodno je bila #422ecc - plava, promijenjeno da se slaže s common.css logikom) */
+    --tertiary-color: #e74c3c; /* Crvena (upozorenje/greška) */
+    --tertiary-color-rgb: 231, 76, 60; /* RGB za tercijarnu boju */
+    --warning-color: #f39c12; /* Narančasta (upozorenje/povezivanje) */
+    --background-light: #f4f7f6; /* Vrlo svijetla pozadina */
+    --background-dark: #0f83a0; /* Nešto tamnija pozadina */
+    --card-background: #ffffff; /* Bijela pozadina kartica */
+    --text-color-dark: #2c3e50; /* Tamno siva za glavni tekst */
+    --text-color-light: #5e6b7c; /* Svijetlija siva za sporedni tekst */
+    --border-color: #e0e0e0; /* Svijetlo siva za obrube */
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lagana sjena */
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); /* Jača sjena za hover */
+    --border-radius: 12px; /* Zaobljeni kutovi */
+    --border-radius-small: 8px; /* Manji zaobljeni kutovi */
+    --input-focus-border: var(--primary-color); /* Boja obruba inputa pri fokusu */
+
+    /* Dodatne varijable za poruke */
+    --success-color: #28a745;
+    --success-color-light: #d4edda;
+    --success-color-dark: #155724;
+    --error-color: #dc3545;
+    --error-color-light: #f8d7da;
+    --error-color-dark: #721c24;
+    --info-color: #17a2b8;
+    --info-color-light: #d1ecf1;
+    --info-color-dark: #0c5460;
+    --warning-color-light: #fff3cd;
+    --warning-color-dark: #856404;
+
+    /* RGB vrijednosti za sjene (ako se koriste u rgba) */
+    --secondary-color-rgb: 39, 174, 96; /* RGB za secondary-color (zelena) */
+}
+
+/* Globalna stilizacija */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, var(--background-light), var(--background-dark));
+    color: var(--text-color-dark);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Poravnaj na vrh */
+    min-height: 100vh;
+    box-sizing: border-box; /* Padding i border uključeni u veličinu */
+    -webkit-font-smoothing: antialiased; /* Bolji prikaz fonta */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Kontejner za cijelu stranicu */
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: 30px auto;
+    padding: 25px;
+    background-color: transparent; /* Pozadina kontejnera je transparentna da se vidi body gradient */
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Razmak između sekcija */
+}
+
+/* Header stilizacija */
+header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.8em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    font-weight: 700;
+}
+
+header h1 .fas {
+    font-size: 0.9em;
+    color: var(--text-color-light);
+}
+
+.current-time, .current-location {
+    font-size: 1.1em;
+    color: var(--text-color-light);
+    font-weight: 500;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.current-time .icon, .current-location .icon {
+    font-size: 0.9em;
+    color: var(--primary-color);
+}
+
+/* Status veze LED */
+.connection-status-wrapper {
+    margin-top: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1em;
+}
+/* Promijenjeno na općenitije klase za status indikaciju */
+.status-connected { color: var(--secondary-color); }
+.status-disconnected { color: var(--tertiary-color); }
+.status-connecting { color: var(--warning-color); } /* Narančasta */
+
+.status-connected .fas, .status-disconnected .fas, .status-connecting .fas {
+    margin-right: 5px;
+    font-size: 0.8em;
+}
+
+/* Kartice - vizualni odjeljci */
+.card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(var(--primary-color-rgb), 0.2);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover::after {
+    opacity: 1;
+}
+
+.card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8em;
+    color: var(--text-color-dark);
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    padding-bottom: 12px;
+    position: relative;
+}
+
+.card h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.card:hover h2::after {
+    width: 80px;
+}
+
+.card h2 .fas {
+    color: var(--primary-color);
+    transition: transform 0.3s ease;
+}
+
+.card:hover h2 .fas {
+    transform: scale(1.1);
+}
+
+.highlight-text {
+    font-weight: 700;
+    color: var(--primary-color);
+    position: relative;
+    display: inline-block;
+}
+
+.highlight-text::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+.highlight-text:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Gumbi - osnovni stil */
+.button {
+    border: none;
+    color: white;
+    background-color: aqua;
+    padding: 12px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1em;
+    margin: 10px 5px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+.button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.button .icon {
+    font-size: 1.2em; /* Povećaj veličinu ikone */
+}
+
+/* Varijante gumba */
+.button.primary {
+    background-color: var(--primary-color);
+}
+.button.primary:hover {
+    background-color: #2980b9;
+}
+
+.button.secondary {
+    background-color: var(--secondary-color);
+}
+.button.secondary:hover {
+    background-color: #219955; /* Tamnija zelena */
+}
+
+.button.tertiary {
+    background-color: var(--tertiary-color);
+}
+.button.tertiary:hover {
+    background-color: #c0392b; /* Tamnija crvena */
+}
+
+.button.warning {
+    background-color: var(--warning-color);
+}
+.button.warning:hover {
+    background-color: #e67e22;
+}
+
+/* Footer stilizacija */
+footer {
+    color: var(--text-color-light); /* Tekst u footeru svjetlije sive */
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 25px;
+    font-size: 0.9em;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer a {
+    color: var(--text-color-light); /* Linkovi u footeru primarne boje */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--primary-color); /* Hover boja za linkove */
+    text-decoration: underline;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-light); /* Boja linkova */
+}
+
+.footer-links a:hover {
+    color: var(--primary-color); /* Hover boja linkova */
+}
+
+.footer-links .fas {
+    font-size: 1.1rem;
+}
+
+.copyright {
+    opacity: 0.8;
+}
+
+/* Dodaj ovo negdje u svoj CSS file, npr. common.css ili index.css */
+.geo-status {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Razmak između LED-a i teksta */
+    margin-top: 5px; /* Mali razmak od gornjih vrijednosti */
+    font-size: 0.9em;
+}
+
+/* Ostatak .led stilova bi već trebao postojati, ali provjeri ih */
+.led {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--color-gray); /* Default boja */
+    display: inline-block;
+    flex-shrink: 0; /* Ne smanjuje se */
+}
+
+.led.green { background-color: var(--color-success); } /* Zelena */
+.led.red { background-color: var(--color-error); }     /* Crvena */
+.led.yellow { background-color: var(--color-warning); } /* Žuta */
+
+/* --- Global Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .container {
+        padding: 20px;
+        gap: 20px;
+    }
+    header h1 {
+        font-size: 2.5em;
+        gap: 12px;
+    }
+    .card {
+        padding: 20px 25px;
+    }
+    .card h2 {
+        font-size: 1.6em;
+    }
+    .button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 20px auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    header h1 {
+        font-size: 2.2em;
+        gap: 10px;
+    }
+    .card {
+        padding: 20px;
+    }
+    .card h2 {
+        font-size: 1.5rem;
+        gap: 8px;
+    }
+    .button {
+        flex: 100%;
+        margin: 5px 0;
+    }
+    .footer-links {
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    footer {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 10px auto;
+        padding: 10px;
+        gap: 10px;
+    }
+    header h1 {
+        font-size: 1.8em;
+        flex-direction: column;
+        gap: 5px;
+    }
+    header h1 .fas {
+        font-size: 1em;
+    }
+    .current-time, .current-location {
+        font-size: 0.9em;
+    }
+    .card {
+        padding: 15px;
+    }
+    .card h2 {
+        font-size: 1.4em;
+    }
+    .button {
+        padding: 10px 15px;
+        font-size: 0.85em;
+    }
+}

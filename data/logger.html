@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Radio Veze Logger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sustav za logiranje radio amaterskih veza s detaljnom poviješću i opcijama izvoza.">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="logger.css"> 
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-book"></i> Radio Veze Logger</h1>
+            <p class="current-time">
+                <span class="icon"><i class="fas fa-clock"></i></span>
+                Trenutno UTC Vrijeme: <time id="utcTime" datetime=""></time>
+            </p>
+            </header>
+
+        <logger class="logger-layout"> 
+            <section class="card" aria-labelledby="addLogHeading">
+                <h2 id="addLogHeading"><i class="fas fa-plus-circle"></i> Dodaj Novi Log</h2>
+                <form id="logForm" novalidate>
+                    <div class="form-group">
+                        <label for="callsign"><i class="fas fa-hashtag"></i> Pozivna Oznaka:</label>
+                        <input type="text" id="callsign" name="callsign" required 
+                               pattern="^[A-Z0-9\/]{3,10}$" 
+                               title="Unesite valjanu pozivnu oznaku (npr. 9A1AA, F/9A5AGN/P). Minimalno 3 znaka, dozvoljeni su brojevi i '/'. Do 10 znakova."
+                               placeholder="Npr. 9A1AA"
+                               autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name"><i class="fas fa-user"></i> Ime:</label>
+                        <input type="text" id="name" name="name" 
+                               placeholder="Ime radioamatera">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="frequency"><i class="fas fa-wave-square"></i> Frekvencija (MHz):</label>
+                        <input type="number" id="frequency" name="frequency" required 
+                               step="0.001" min="0.1" max="1500"
+                               placeholder="Npr. 14.200">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modulation"><i class="fas fa-sliders-h"></i> Modulacija:</label>
+                        <select id="modulation" name="modulation" required onchange="updateRSTDefault()">
+                            <option value="" disabled selected>Odaberite modulaciju</option>
+                            <option value="SSB">SSB</option>
+                            <option value="CW">CW</option>
+                            <option value="FT8">FT8</option>
+                            <option value="FT4">FT4</option>
+                            <option value="FM">FM</option>
+                            <option value="AM">AM</option>
+                            <option value="DIGITAL">DIGITAL</option>
+                            <option value="RTTY">RTTY</option>
+                            <option value="OTHER">OSTALO</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="rstSent"><i class="fas fa-arrow-up"></i> RST Poslano:</label>
+                            <input type="text" id="rstSent" name="rstSent" 
+                                   placeholder="59/599"
+                                   value="59">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="rstReceived"><i class="fas fa-arrow-down"></i> RST Primljeno:</label>
+                            <input type="text" id="rstReceived" name="rstReceived" 
+                                   placeholder="59/599"
+                                   value="59">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="qthlocator"><i class="fas fa-map-pin"></i> QTH Lokator:</label>
+                        <input type="text" id="qthlocator" name="qthlocator"
+                               pattern="^[A-R]{2}[0-9]{2}([A-X]{2})?$"
+                               title="Maidenhead lokator (npr. JN85XX)."
+                               placeholder="Maidenhead lokator (Npr. JN85XX)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes"><i class="fas fa-sticky-note"></i> Bilješke:</label>
+                        <textarea id="notes" name="notes" rows="2" 
+                                   placeholder="Dodatne bilješke o vezi"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="button primary" 
+                                aria-label="Dodaj novu radio vezu u log">
+                            <span class="icon"><i class="fas fa-plus"></i></span> Dodaj Log
+                        </button>
+                    </div>
+                </form>
+                <div id="formMessage" class="message-area" role="alert" aria-live="polite"></div>
+            </section>
+
+            <section class="card" aria-labelledby="logHistoryHeading">
+                <div class="section-header">
+                    <h2 id="logHistoryHeading"><i class="fas fa-history"></i> Povijest Logova</h2>
+                    <div class="search-filter">
+                        <input type="text" id="searchInput" placeholder="Pretraži (pozivna, QTH, bilješke)..." onkeyup="filterLogs()">
+                        <button class="button small" onclick="filterLogs()" aria-label="Pretraži logove">
+                            <span class="icon"><i class="fas fa-search"></i></span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table id="logTable" aria-describedby="logHistoryHeading">
+                        <caption class="sr-only">Popis svih logiranih radio veza</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Vrijeme (UTC)</th>
+                                <th scope="col">Pozivna</th>
+                                <th scope="col">Ime</th>
+                                <th scope="col">Frekvencija</th>
+                                <th scope="col">Modulacija</th>
+                                <th scope="col">RST</th>
+                                <th scope="col">QTH</th>
+                                <th scope="col">Bilješke</th>
+                                <th scope="col">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="noLogsMessage" class="info-message hidden">
+                    <i class="fas fa-exclamation-circle"></i> Nema pronađenih logova.
+                </p>
+                
+                <div class="table-footer">
+                    <button id="exportADIFBtn" class="button secondary" onclick="exportToADIF()" aria-label="Izvezi sve logove u ADIF format">
+                        <span class="icon"><i class="fas fa-file-export"></i></span> Izvezi u ADIF
+                    </button>
+                    <button id="exportCSVBtn" class="button csv" onclick="exportToCSV()" aria-label="Izvezi sve logove u CSV format">
+                        <span class="icon"><i class="fas fa-file-csv"></i></span> Izvezi u CSV
+                    </button>
+                    <button id="clearLogsBtn" class="button tertiary" onclick="confirmClearAllLogs()" aria-label="Obriši sve logove">
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span> Obriši Sve
+                    </button>
+                </div>
+            </section>
+        </logger>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="index.html"><i class="fas fa-home"></i> Početna</a>
+                    <a href="logger.html"><i class="fas fa-book"></i> Logger</a>
+                    <a href="mailto:supljikamarin1@gmail.com"><i class="fas fa-envelope"></i> Kontakt</a>
+                    <a href="https://github.com/MaNir007" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                </div>
+                <p class="copyright">&copy; 2025 Radio Amater Sustav. Sva prava pridržana.</p>
+                <p>Powered by <a href="http://marinsupljika.from.hr/" target="_blank">9A5AGN</a></p>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="common.js"></script>
+    <script src="logger.js"></script>
+</body>
+</html>
