@@ -1,29 +1,30 @@
 @echo off
-:: Ulazi u mapu gdje je skripta
 cd /d "%~dp0"
-
-:: Skok u root direktorij projekta (tamo gdje je .git mapa)
 for /f "delims=" %%i in ('git rev-parse --show-toplevel') do cd /d "%%i"
 
-echo --- Zapocinjem slanje promjena na GitHub ---
-echo Lokacija projekta: %cd%
+echo --- Zapocinjem uskladjivanje s GitHubom ---
+echo Lokacija: %cd%
 echo.
 
-:: Prvo dodajemo SVE promjene iz svih mapa
+:: 1. Prvo povuci promjene s GitHuba (rjesava tvoj error)
+echo Dohvacam nove promjene s servera...
+git pull origin main --rebase
+
+echo.
+:: 2. Dodaj sve tvoje lokalne promjene
 git add -A
 
-:: Sada prikazujemo status da vidis sto ce se poslati
 echo --- Datoteke spremne za slanje: ---
 git status --short
 echo.
 
-:: Unos poruke
+:: 3. Unos poruke
 set /p msg="Update: "
 
-:: Commit i Push
+:: 4. Commit i Push
 git commit -m "%msg%"
 git push origin main
 
 echo.
-echo --- Gotovo! ---
+echo --- Gotovo! Sve je sinkronizirano. ---
 pause
