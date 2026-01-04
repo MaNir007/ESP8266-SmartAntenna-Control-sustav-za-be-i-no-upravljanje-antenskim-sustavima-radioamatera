@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" href="common.css"> 
     <link rel="stylesheet" href="index.css"> 
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="icon.png" type="image/png">
 </head>
 <body>
     <div class="container">
@@ -100,8 +100,16 @@
             <section class="card" aria-labelledby="loggerHeading">
                 <h2 id="loggerHeading"><i class="fas fa-book"></i> Logiranje Veza</h2>
                 <p>Upravljanje dnevnikom radio veza (QSO log).</p>
-                <button class="button primary" onclick="location.href='logger.html'">
+                <button class="button primary" onclick="window.open('logger.html', '_blank')">
                     <i class="fas fa-edit"></i> Otvori Logger
+                </button>
+            </section>
+
+            <section class="card" aria-labelledby="data_graf">
+                <h2 id="data_graf"><i class="fas fa-chart-bar"></i> Graf temperature i vlage</h2>
+                <p>Graf temperature i vlage.</p>
+                <button class="button primary" onclick="window.open('data_graf.html', '_blank')">
+                    <i class="fas fa-edit"></i> Otvori grafove
                 </button>
             </section>
 
@@ -118,6 +126,7 @@
                 <div class="footer-links">
                     <a href="index.html"><i class="fas fa-home"></i> Početna</a>
                     <a href="logger.html"><i class="fas fa-book"></i> Logger</a>
+                    <a href="data_graf.html"><i class="fas fa-chart-bar"></i> Graf</a>
                     <a href="mailto:supljikamarin1@gmail.com"><i class="fas fa-envelope"></i> Kontakt</a>
                     <a href="https://www.qrz.com/db/9A5AGN" target="_blank"><i class="fas fa-broadcast-tower"></i> QRZ</a>
                     <a href="https://github.com/MaNir007" target="_blank"><i class="fab fa-github"></i> GitHub</a>

@@ -36,6 +36,28 @@ void handleNotFound() {
     server.send(404, "text/plain", "404 Nije pronadjeno: " + path);
 }
 
+// --- API ZA GRAFIKON (Novo i usklađeno s data_graf.js) ---
+
+void handleDataGraf() {
+    float temperature = getTemperature();
+    float humidity = getHumidity();
+
+    JsonDocument doc; 
+    // Ako senzor ne radi, šaljemo 0 da graf ne pukne
+    if (temperature == -999.0 || humidity == -999.0) {
+        doc["temp"] = 0.0;
+        doc["hum"] = 0.0;
+        doc["error"] = "Senzor nedostupan";
+    } else {
+        doc["temp"] = temperature; // Ključ mora biti "temp" za JS
+        doc["hum"] = humidity;     // Ključ mora biti "hum" za JS
+    }
+
+    String res;
+    serializeJson(doc, res);
+    server.send(200, "application/json", res);
+}
+
 // --- API ZA SENZORE I VRIJEME ---
 
 void handleSensorReadings() {
@@ -68,7 +90,7 @@ void handleUtcTime() {
     server.send(200, "application/json", res);
 }
 
-// --- API ZA ANTENU I STEPER (Točni nazivi s GitHuba) ---
+// --- API ZA ANTENU I STEPER ---
 
 void handleAntennaStatus() {
     JsonDocument doc;
@@ -82,7 +104,6 @@ void handleSetAntenna() {
     if (server.hasArg("plain")) {
         JsonDocument doc;
         deserializeJson(doc, server.arg("plain"));
-        // Na GitHubu koristiš "type" kao ključ
         String type = doc["type"].as<String>();
         setAntennaType(type);
         server.send(200, "text/plain", "OK");
@@ -91,7 +112,7 @@ void handleSetAntenna() {
 
 void handleServoAngle() {
     JsonDocument doc;
-    doc["angle"] = getCurrentServoAngle(); // Točan naziv s GitHuba
+    doc["angle"] = getCurrentServoAngle();
     String res;
     serializeJson(doc, res);
     server.send(200, "application/json", res);
@@ -102,7 +123,7 @@ void handleSetAngle() {
         JsonDocument doc;
         deserializeJson(doc, server.arg("plain"));
         int receivedAngle = doc["angle"].as<int>();
-        setServoAngle(receivedAngle); // Točan naziv s GitHuba
+        setServoAngle(receivedAngle);
         server.send(200, "text/plain", "OK");
     }
 }
@@ -112,7 +133,7 @@ void handleCalibrateServo() {
     server.send(200, "text/plain", "OK");
 }
 
-// --- NOVI LOG MANAGER API (Za logger.js) ---
+// --- LOG MANAGER API ---
 
 void handleGetLogs() {
     server.send(200, "application/json", getAllLogsAsJson());
@@ -151,8 +172,9 @@ void handleClearAllLogs() {
 // --- INICIJALIZACIJA ---
 
 void initWebServer() {
+    // Osnovne stranice
     server.on("/", HTTP_GET, handleRoot);
-
+    
     server.on("/logger", HTTP_GET, []() {
         if (LittleFS.exists("/logger.html")) {
             File file = LittleFS.open("/logger.html", "r");
@@ -160,6 +182,9 @@ void initWebServer() {
             file.close();
         }
     });
+
+    // NOVO: Ruta za grafikon
+    server.on("/data", HTTP_GET, handleDataGraf);
 
     // API Rute
     server.on("/api/sensor_readings", HTTP_GET, handleSensorReadings);
@@ -179,7 +204,7 @@ void initWebServer() {
     server.onNotFound(handleNotFound);
 
     server.begin();
-    Serial.println("Web server spreman!");
+    Serial.println("Web server spreman! Ruta /data aktivna.");
 }
 
 void handleClientRequests() {

@@ -58,7 +58,7 @@ function updateAntennaUI(antennaType) {
     statusText.textContent = antennaType;
 
     // Resetiraj klase (ukloni boje)
-    led.classList.remove('gp-active', 'yagi-active');
+    led.classList.remove('yagi-active', 'gp-active');
 
     // Dodaj boju ovisno o tipu
     if (antennaType === 'GP') {

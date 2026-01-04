@@ -17,7 +17,7 @@
 #define STEPPER_IN4 D0
 
 // Parametri kretanja (prilagođeno za teret antene)
-const int STEPPER_MAX_SPEED = 250;      
+const int STEPPER_MAX_SPEED = 200;      
 const int STEPPER_ACCELERATION = 100;   
 const int STEPS_PER_REV = 2048;         
 
