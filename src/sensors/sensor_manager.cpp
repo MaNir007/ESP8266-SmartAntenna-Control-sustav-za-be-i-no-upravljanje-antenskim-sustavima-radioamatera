@@ -1,3 +1,9 @@
+/**
+ * @file sensor_manager.cpp
+ * @brief Upravljanje senzorima u sustavu (DHT22, GPS, napon).
+ * @details Modul pruža apstrakciju za dohvat podataka s različitih senzora.
+ * Pokreće GPS komunikaciju i čitanje okolišnih uvjeta (temperatura i vlaga).
+ */
 #include "sensor_manager.h"
 #include "../config/config.h" 
 #include <DHT.h>
@@ -60,6 +66,9 @@ float getVoltage() {
 
 // --- GPS FUNKCIJE ---
 
+/**
+ * @brief Inicijalizira serijsku komunikaciju za GPS modul na zadanom baud rateu.
+ */
 void initGps() {
     // GPS_BAUD_RATE bi trebao biti u config.h (najčešće 9600 za Neo-6M)
     #ifndef GPS_BAUD_RATE
@@ -70,6 +79,10 @@ void initGps() {
     Serial.println("GPS SoftwareSerial pokrenut na 9600 baud.");
 }
 
+/**
+ * @brief Čita dostupne podatke iz GPS-a i ažurira globalne koordinate.
+ * Poziva se periodički unutar glavne petlje (loop).
+ */
 void updateGpsData() {
     // Čitanje podataka s GPS serijskog porta
     while (gpsSerial.available()) {
@@ -100,6 +113,17 @@ void updateGpsData() {
     }
 }
 
+/**
+ * @brief Vraća je li GPS lokacija trenutno valjana.
+ */
 bool isGpsValid() { return gpsValid; }
+
+/**
+ * @brief Dohvaća zadnju poznatu geografsku širinu.
+ */
 float getGpsLatitude() { return currentLat; }
+
+/**
+ * @brief Dohvaća zadnju poznatu geografsku dužinu.
+ */
 float getGpsLongitude() { return currentLon; }

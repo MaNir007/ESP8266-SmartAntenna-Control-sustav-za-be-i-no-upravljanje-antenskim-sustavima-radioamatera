@@ -6,12 +6,12 @@
 struct LogEntry {
     String time;
     String callsign;
-    String name;         // <--- DODANO OVO POLJE!
+    String country;
+    String name;
     float frequency;
     String modulation;
-    String rstSent;      // OVO MORA BITI TU! (Već je bilo)
-    String rstReceived;  // OVO MORA BITI TU! (Već je bilo)
-    //String location;   // I dalje je zakomentirano/izbrisano kako je dogovoreno
+    String rstSent;
+    String rstReceived;
     String qthlocator;
     String notes;
     // ... ostala polja

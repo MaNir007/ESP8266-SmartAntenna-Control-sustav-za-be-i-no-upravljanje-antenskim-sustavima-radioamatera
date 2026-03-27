@@ -34,6 +34,15 @@
                                title="Unesite valjanu pozivnu oznaku (npr. 9A1AA, F/9A5AGN/P). Minimalno 3 znaka, dozvoljeni su brojevi i '/'. Do 10 znakova."
                                placeholder="Npr. 9A1AA"
                                autocomplete="off">
+
+                        <div id="dxccInfo" style="margin-top: 10px; display: flex; align-items: center; min-height: 25px;">
+                            <img id="flagImg" src="" style="width: 30px; border: 1px solid #555; display: none; margin-right: 10px;">
+                            <span id="countryName" style="font-weight: 500; color: #fff;"></span>
+
+                            <button type="button" id="qrz" class="button qrz" onclick="openQrz()" aria-label="Otvori pozivnu oznaku u QRZ.com">
+                                <span class="icon"><i class="fas fa-broadcast-tower"></i></span> Otvori pozivnu oznaku u QRZ.com
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -122,6 +131,7 @@
                             <tr>
                                 <th scope="col">Vrijeme (UTC)</th>
                                 <th scope="col">Pozivna</th>
+                                <th scope="col">Država</th>
                                 <th scope="col">Ime</th>
                                 <th scope="col">Frekvencija</th>
                                 <th scope="col">Modulacija</th>

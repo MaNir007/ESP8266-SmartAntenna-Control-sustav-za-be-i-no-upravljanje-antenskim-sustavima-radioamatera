@@ -1,3 +1,9 @@
+/**
+ * @file time_sync.cpp
+ * @brief Sinkronizacija točnog vremena putem NTP protokola.
+ * @details Dohvaća vrijeme s internetskog NTP servera i pretvara ga iz
+ * epoch timestampa u prikladni YYYY-MM-DD HH:MM:SS format za logiranje veza.
+ */
 // src/time/time_sync.cpp
 #include "time_sync.h"
 #include "../config/config.h" // Potrebno za NTP_SERVER, NTP_OFFSET, NTP_UPDATE_INTERVAL
@@ -7,6 +13,9 @@
 // Globalni objekti su deklarirani kao 'extern' u .h i definirani u main.cpp
 // Ovdje ih samo koristimo.
 
+/**
+ * @brief Inicijalizira NTP klijenta i pokušava forsirati početno dohvaćanje vremena.
+ */
 void initTimeSync() {
     timeClient.begin(); // Pokreće NTP klijenta
     Serial.print("Sinkronizacija vremena s NTP serverom...");
@@ -25,6 +34,9 @@ void initTimeSync() {
     }
 }
 
+/**
+ * @brief Periodički osvježava vrijeme u pozadini. Valja ju neprestano pozivati unutar loop-a.
+ */
 void updateTime() {
     // Ova funkcija se poziva iz getFormattedUTCTime() kako bi osigurala
     // da imamo najnovije vrijeme prije formatiranja.
@@ -37,6 +49,11 @@ void updateTime() {
     }
 }
 
+/**
+ * @brief Dohvaća trenutno UTC vrijeme formatirano kao niz znakova tipa "YYYY-MM-DD HH:MM:SS".
+ * Uključuje validaciju Year 2038 problema.
+ * @return Ekran prijazan datum i vrijeme. U slučaju greške, vraća informativnu poruku.
+ */
 String getFormattedUTCTime() {
     updateTime(); // Prvo pokušaj ažurirati vrijeme
 

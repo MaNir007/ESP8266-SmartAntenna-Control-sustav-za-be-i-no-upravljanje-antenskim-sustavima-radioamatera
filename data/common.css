@@ -233,7 +233,7 @@ header h1 .fas {
 .button {
     border: none;
     color: white;
-    background-color: aqua;
+    background-color: var(--primary-color);
     padding: 12px 25px;
     text-align: center;
     text-decoration: none;

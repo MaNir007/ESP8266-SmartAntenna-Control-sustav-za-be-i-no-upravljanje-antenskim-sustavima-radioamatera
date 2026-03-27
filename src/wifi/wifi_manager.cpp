@@ -1,4 +1,9 @@
  
+/**
+ * @file wifi_manager.cpp
+ * @brief Povezivanje uređaja u lokalnu bežičnu mrežu.
+ * @details Inicijalizira i održava vezu s WiFi pristupnom točkom definiranom u config.h.
+ */
 // src/wifi/wifi_manager.cpp
 #include "wifi_manager.h"
 #include "../config/config.h" // Pristup konfiguraciji
@@ -6,6 +11,10 @@
 // Instanca WiFiClient (ako se koristi, npr. za MQTT)
 // WiFiClient espClient;
 
+/**
+ * @brief Pokreće proceduru spajanja na WiFi s definiranim kredencijalima.
+ * U slučaju uzastopnih neuspješnih pokušaja, ispisuje grešku (moguć soft-AP fallback).
+ */
 void initWiFi() {
     Serial.print("Povezivanje na WiFi...");
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Koristimo konstante iz config.h
@@ -24,10 +33,17 @@ void initWiFi() {
     }
 }
 
+/**
+ * @brief Provjerava trenutni status veze.
+ * @return True ako je uređaj uspješno povezan s mrežom, inače false.
+ */
 bool isWiFiConnected() {
     return WiFi.status() == WL_CONNECTED;
 }
 
+/**
+ * @brief Vraća lokalnu IP adresu uređaja u obliku Stringa.
+ */
 String getIPAddress() {
     return WiFi.localIP().toString();
 }
