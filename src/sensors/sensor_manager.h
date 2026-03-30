@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// sensor_manager.h - Sučelje za upravljanje senzorima (DHT, GPS, ADC)
+// ---------------------------------------------------------------------------
+// Definira globalne objekte, varijable i funkcije za prikupljanje podataka
+// s okolišnih senzora i GPS modula.
+// ---------------------------------------------------------------------------
 #ifndef SENSOR_MANAGER_H
 #define SENSOR_MANAGER_H
 
@@ -6,7 +12,6 @@
 #include <SoftwareSerial.h> 
 #include <TinyGPSPlus.h>    
 
-// Deklaracija globalnih objekata (definirani u main.cpp)
 extern DHT dht; 
 extern SoftwareSerial gpsSerial;
 extern TinyGPSPlus gps;
@@ -16,10 +21,11 @@ extern float currentLat;
 extern float currentLon;
 extern bool gpsValid;
 
-// --- GPS PIN KONFIGURACIJA ---
-// VAŽNO: Pomaknuto s D5/D6 na D4/D3 jer stepper koristi D5/D6/D7/D0
-#define GPS_RX_PIN D4 // GPIO2 - Spoji TX pin GPS-a ovdje
-#define GPS_TX_PIN D3 // GPIO0 - Spoji RX pin GPS-a ovdje
+// ---------------------------------------------------------------------------
+// GPS PIN KONFIGURACIJA
+// ---------------------------------------------------------------------------
+#define GPS_RX_PIN D4 
+#define GPS_TX_PIN D3 
 #define GPS_BAUD_RATE 9600 
 
 // Deklaracije funkcija za senzore
@@ -28,7 +34,6 @@ float getTemperature();
 float getHumidity();
 float getVoltage(); 
 
-// Deklaracije funkcija za GPS
 void initGps(); 
 void updateGpsData(); 
 bool isGpsValid();

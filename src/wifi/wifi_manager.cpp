@@ -1,23 +1,20 @@
- 
-/**
- * @file wifi_manager.cpp
- * @brief Povezivanje uređaja u lokalnu bežičnu mrežu.
- * @details Inicijalizira i održava vezu s WiFi pristupnom točkom definiranom u config.h.
- */
-// src/wifi/wifi_manager.cpp
+// ---------------------------------------------------------------------------
+// wifi_manager.cpp - Povezivanje uređaja na WiFi mrežu
+// ---------------------------------------------------------------------------
+// Inicijalizira i održava vezu s WiFi pristupnom točkom.
+// Sadrži logiku za spajanje, provjeru statusa i dohvat IP adrese.
+// ---------------------------------------------------------------------------
 #include "wifi_manager.h"
-#include "../config/config.h" // Pristup konfiguraciji
+#include "../config/config.h" 
 
-// Instanca WiFiClient (ako se koristi, npr. za MQTT)
-// WiFiClient espClient;
 
-/**
- * @brief Pokreće proceduru spajanja na WiFi s definiranim kredencijalima.
- * U slučaju uzastopnih neuspješnih pokušaja, ispisuje grešku (moguć soft-AP fallback).
- */
+
+// ---------------------------------------------------------------------------
+// Pokreće proceduru spajanja na WiFi
+// ---------------------------------------------------------------------------
 void initWiFi() {
     Serial.print("Povezivanje na WiFi...");
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD); // Koristimo konstante iz config.h
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD); 
     int connectAttempts = 0;
     while (WiFi.status() != WL_CONNECTED && connectAttempts < 20) {
         delay(500);
@@ -29,21 +26,19 @@ void initWiFi() {
     } else {
         Serial.println("\nWiFi povezivanje neuspješno nakon " + String(connectAttempts) + " pokušaja!");
         Serial.println("Provjerite SSID/lozinku i pokušajte ponovo.");
-        // Ovdje možete dodati logiku za pad back na AP način rada ako je potrebno
     }
 }
 
-/**
- * @brief Provjerava trenutni status veze.
- * @return True ako je uređaj uspješno povezan s mrežom, inače false.
- */
+// ---------------------------------------------------------------------------
+// Provjerava trenutni status veze
+// ---------------------------------------------------------------------------
 bool isWiFiConnected() {
     return WiFi.status() == WL_CONNECTED;
 }
 
-/**
- * @brief Vraća lokalnu IP adresu uređaja u obliku Stringa.
- */
+// ---------------------------------------------------------------------------
+// Vraća lokalnu IP adresu uređaja
+// ---------------------------------------------------------------------------
 String getIPAddress() {
     return WiFi.localIP().toString();
 }

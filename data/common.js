@@ -1,14 +1,17 @@
+// ---------------------------------------------------------------------------
 // common.js - Zajedničke funkcije i globalne varijable
+// ---------------------------------------------------------------------------
+// Sadrži temeljne funkcije za mrežnu komunikaciju (REST API),
+// upravljanje UI elementima (status konekcije, obavijesti) i 
+// pomoćne alate poput izračuna QTH lokatora.
+// ---------------------------------------------------------------------------
 
-// ISPRAVAK: Bazni URL bez "/api" na kraju jer endpointi već sadrže taj prefiks
 const API_BASE_URL = `http://${window.location.hostname}`;
 
-/**
- * Pomoćna funkcija za slanje HTTP zahtjeva.
- * @param {string} endpoint - API putanja (npr. '/api/set_angle').
- */
+// ---------------------------------------------------------------------------
+// Pomoćna funkcija za slanje HTTP zahtjeva
+// ---------------------------------------------------------------------------
 async function sendHttpRequest(endpoint, method = 'GET', data = null) {
-    // Osiguravamo da endpoint počinje kosom crtom i spajamo s bazom
     const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const url = `${API_BASE_URL}${path}`;
 
@@ -31,7 +34,6 @@ async function sendHttpRequest(endpoint, method = 'GET', data = null) {
             throw new Error(`HTTP error! Status: ${response.status}, Poruka: ${errorText}`);
         }
 
-        // Ako je zahtjev uspješan, ažuriraj status na "Povezano"
         updateConnectionStatus('connected');
 
         const contentType = response.headers.get("content-type");
@@ -45,7 +47,6 @@ async function sendHttpRequest(endpoint, method = 'GET', data = null) {
         console.error(`Greška kod ${method} ${url}:`, error);
         updateConnectionStatus('disconnected');
         
-        // Prikazuj poruku samo za akcije (POST/DELETE), ne za automatsko osvježavanje senzora
         if (method !== 'GET') {
             showFormMessage(`Greška komunikacije: ${error.message}`, 'error');
         }
@@ -53,9 +54,9 @@ async function sendHttpRequest(endpoint, method = 'GET', data = null) {
     }
 }
 
-/**
- * Ažurira vizualni status veze u zaglavlju stranice.
- */
+// ---------------------------------------------------------------------------
+// Ažurira vizualni status veze u zaglavlju stranice
+// ---------------------------------------------------------------------------
 function updateConnectionStatus(status) {
     const statusElement = document.getElementById('connectionStatus');
     if (!statusElement) return;
@@ -95,9 +96,9 @@ function updateConnectionStatus(status) {
     statusElement.innerHTML = `${icon} <span>${text}</span>`;
 }
 
-/**
- * Prikazuje poruku (toast notification) korisniku.
- */
+// ---------------------------------------------------------------------------
+// Prikazuje poruku (toast notification) korisniku
+// ---------------------------------------------------------------------------
 function showFormMessage(message, type, timeout = 3000) {
     const formMessage = document.getElementById('formMessage');
     if (formMessage) {
@@ -116,9 +117,9 @@ function showFormMessage(message, type, timeout = 3000) {
     }
 }
 
-/**
- * Preuzimanje datoteka (npr. ADIF logovi).
- */
+// ---------------------------------------------------------------------------
+// Preuzimanje datoteka (npr. ADIF logovi)
+// ---------------------------------------------------------------------------
 function downloadFile(content, filename, type = 'text/plain;charset=utf-8') {
     const blob = new Blob([content], { type: type });
     const a = document.createElement('a');
@@ -130,31 +131,31 @@ function downloadFile(content, filename, type = 'text/plain;charset=utf-8') {
     URL.revokeObjectURL(a.href);
 }
 
-/**
- * Izračunava Maidenhead Locator (QTH) iz koordinata.
- */
+// ---------------------------------------------------------------------------
+// Izračunava Maidenhead Locator (QTH) iz koordinata
+// ---------------------------------------------------------------------------
 function calculateQthLocator(latitude, longitude) {
     let lon = longitude + 180;
     let lat = latitude + 90;
 
     let locator = "";
 
-    // Field (npr. JN)
+
     locator += String.fromCharCode(65 + Math.floor(lon / 20));
     locator += String.fromCharCode(65 + Math.floor(lat / 10));
 
-    // Square (npr. 85)
+
     locator += Math.floor((lon % 20) / 2).toString();
     locator += Math.floor(lat % 10).toString();
 
-    // Subsquare (npr. fb)
+
     locator += String.fromCharCode(97 + Math.floor((lon % 2) * 12)).toLowerCase();
     locator += String.fromCharCode(97 + Math.floor((lat % 1) * 24)).toLowerCase();
 
     return locator;
 }
 
-// Globalno izlaganje funkcija
+
 window.sendHttpRequest = sendHttpRequest;
 window.updateConnectionStatus = updateConnectionStatus;
 window.showFormMessage = showFormMessage;

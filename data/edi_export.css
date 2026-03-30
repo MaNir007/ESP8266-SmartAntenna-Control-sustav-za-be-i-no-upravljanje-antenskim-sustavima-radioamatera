@@ -1,0 +1,139 @@
+/* --------------------------------------------------------------------------- */
+/* edi_export.css - Stilovi za stranicu konfiguracije EDI izvoza               */
+/* --------------------------------------------------------------------------- */
+/* Definira layout forme s mrežom (grid), stilizaciju naslova sekcija         */
+/* i prilagodbu elemenata forme za unos natjecateljskih podataka.            */
+/* --------------------------------------------------------------------------- */
+
+.edi-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edi-container header h1 {
+    color: var(--warning-color);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+.section-title {
+    grid-column: 1 / -1;
+    margin: 25px 0 10px 0;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+    color: var(--primary-color);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Stilizacija grupa unutar forme */
+.edi-container .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color-dark);
+    font-size: 0.95em;
+}
+
+.edi-container .form-group input,
+.edi-container .form-group select,
+.edi-container .form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    background-color: var(--card-background);
+    color: var(--text-color-dark);
+    font-size: 1em;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.edi-container .form-group input:focus,
+.edi-container .form-group select:focus,
+.edi-container .form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
+    outline: none;
+}
+
+/* Info box stilizacija */
+.info-box {
+    background: rgba(var(--primary-color-rgb), 0.08);
+    border-left: 5px solid var(--primary-color);
+    padding: 18px;
+    margin-bottom: 25px;
+    border-radius: var(--border-radius-small);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-color-dark);
+    font-size: 1.05em;
+}
+
+.info-box i {
+    color: var(--primary-color);
+    font-size: 1.3em;
+}
+
+.info-box strong {
+    color: var(--primary-color);
+}
+
+/* Gumb za generiranje datoteke */
+.btn-generate {
+    background: linear-gradient(135deg, #d68910, #d68910);
+    color: white;
+    margin-top: 35px;
+    width: 100%;
+    font-size: 1.15em;
+    padding: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.25);
+}
+
+.btn-generate:hover {
+    background: linear-gradient(135deg, #996107, #996107);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(40, 167, 69, 0.35);
+}
+
+.btn-generate:active {
+    transform: translateY(0);
+}
+
+/* Responzivne prilagodbe za footer */
+.edi-container footer {
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+}

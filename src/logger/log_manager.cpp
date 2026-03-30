@@ -1,10 +1,10 @@
-/**
- * @file log_manager.cpp
- * @brief Implementacija sustava za upravljanje evidencijom radio veza (logovima).
- * @details Ovaj modul sadrži funkcije za dodavanje, brisanje i čitanje logova.
- * Logovi se čuvaju u lokalnoj JSON datoteci unutar LittleFS datotečnog sustava
- * radi otpornosti na gubitak napajanja, te kao radna kopija u standardnom vectoru.
- */
+// ---------------------------------------------------------------------------
+// log_manager.cpp - Upravljanje evidencijom radio veza (logovima)
+// ---------------------------------------------------------------------------
+// Modul sadrži funkcije za dodavanje, brisanje i čitanje logova.
+// Logovi se čuvaju u lokalnoj JSON datoteci unutar LittleFS sustava
+// te kao radna kopija u standardnom vectoru radi bržeg pristupa.
+// ---------------------------------------------------------------------------
 
 #include "log_manager.h"
 #include "../config/config.h"
@@ -16,26 +16,24 @@ std::vector<LogEntry> radioLogs;
 static void loadLogsFromLittleFS();
 static void saveLogsToLittleFS();
 
-/**
- * @brief Inicijalizira log manager učitavanjem postojećih logova iz LittleFS-a.
- */
+// ---------------------------------------------------------------------------
+// Inicijalizira log manager učitavanjem logova iz LittleFS-a
+// ---------------------------------------------------------------------------
 void initLogManager() {
     loadLogsFromLittleFS();
 }
 
-/**
- * @brief Dodaje novi log u radnu memoriju i automatski ga sprema u trajnu memoriju.
- * @param newLog Objekt LogEntry koji sadrži sve podatke o radio vezi.
- */
+// ---------------------------------------------------------------------------
+// Dodaje novi log u radnu memoriju i automatski ga sprema
+// ---------------------------------------------------------------------------
 void addLog(const LogEntry& newLog) {
     radioLogs.push_back(newLog);
     saveLogsToLittleFS();
 }
 
-/**
- * @brief Serijalizira sve logove u JSON niz znakova prikladan za slanje na frontend.
- * @return String koji predstavlja JSON array svih unosa.
- */
+// ---------------------------------------------------------------------------
+// Serijalizira sve logove u JSON niz znakova
+// ---------------------------------------------------------------------------
 String getAllLogsAsJson() {
     JsonDocument doc; 
     JsonArray logsArray = doc.to<JsonArray>();
@@ -51,6 +49,8 @@ String getAllLogsAsJson() {
         logObj["rstSent"] = log.rstSent;
         logObj["rstReceived"] = log.rstReceived;
         logObj["qthlocator"] = log.qthlocator;
+        logObj["sentNr"] = log.sentNr;
+        logObj["rcvdNr"] = log.rcvdNr;
         logObj["notes"] = log.notes;
     }
 
@@ -59,11 +59,9 @@ String getAllLogsAsJson() {
     return jsonResponse;
 }
 
-/**
- * @brief Briše određeni log iz evidencije prema indeksu.
- * @param index Pozicija (0-indexed) loga unutar vektora.
- * @return True ako je brisanje uspješno (indeks valjan), inače false.
- */
+// ---------------------------------------------------------------------------
+// Briše određeni log iz evidencije prema indeksu
+// ---------------------------------------------------------------------------
 bool deleteLog(int index) {
     if (index >= 0 && (size_t)index < radioLogs.size()) {
         radioLogs.erase(radioLogs.begin() + index);
@@ -73,19 +71,18 @@ bool deleteLog(int index) {
     return false;
 }
 
-/**
- * @brief Uklanja apsolutno sve logove iz vektora i sprema prazan JSON fajl.
- * @return Uvijek vraća true.
- */
+// ---------------------------------------------------------------------------
+// Uklanja apsolutno sve logove iz vektora
+// ---------------------------------------------------------------------------
 bool clearAllLogs() {
     radioLogs.clear();
     saveLogsToLittleFS();
     return true;
 }
 
-/**
- * @brief Pomoćna funkcija za inicijalno učitavanje logova iz JSON fajla.
- */
+// ---------------------------------------------------------------------------
+// Pomoćna funkcija za inicijalno učitavanje logova iz JSON fajla
+// ---------------------------------------------------------------------------
 static void loadLogsFromLittleFS() {
     JsonDocument doc;
     if (!loadJsonFromFile(LOG_FILENAME, doc)) {
@@ -105,14 +102,16 @@ static void loadLogsFromLittleFS() {
         log.rstSent = logObj["rstSent"].as<String>();
         log.rstReceived = logObj["rstReceived"].as<String>();
         log.qthlocator = logObj["qthlocator"].as<String>();
+        log.sentNr = logObj["sentNr"].as<String>();
+        log.rcvdNr = logObj["rcvdNr"].as<String>();
         log.notes = logObj["notes"].as<String>();
         radioLogs.push_back(log);
     }
 }
 
-/**
- * @brief Pomoćna funkcija koja sprema trenutno stanje svih logova iz vektora u trajnu memoriju.
- */
+// ---------------------------------------------------------------------------
+// Sprema trenutno stanje svih logova u trajnu memoriju
+// ---------------------------------------------------------------------------
 static void saveLogsToLittleFS() {
     JsonDocument doc;
     JsonArray logsArray = doc.to<JsonArray>();
@@ -127,6 +126,8 @@ static void saveLogsToLittleFS() {
         logObj["rstSent"] = log.rstSent;
         logObj["rstReceived"] = log.rstReceived;
         logObj["qthlocator"] = log.qthlocator;
+        logObj["sentNr"] = log.sentNr;
+        logObj["rcvdNr"] = log.rcvdNr;
         logObj["notes"] = log.notes;
     }
     saveJsonToFile(LOG_FILENAME, doc);

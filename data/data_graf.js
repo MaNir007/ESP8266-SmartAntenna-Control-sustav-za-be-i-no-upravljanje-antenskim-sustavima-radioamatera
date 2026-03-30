@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// data_graf.js - Logika za iscrtavanje grafikona senzora
+// ---------------------------------------------------------------------------
+// Koristi Chart.js za prikaz temperature i vlage. Podržava učitavanje
+// povijesnih podataka s uređaja i periodičko osvježavanje u stvarnom vremenu.
+// ---------------------------------------------------------------------------
 const ctx = document.getElementById('sensorChart').getContext('2d');
 const sensorChart = new Chart(ctx, {
     type: 'line',
@@ -34,24 +40,23 @@ const sensorChart = new Chart(ctx, {
     }
 });
 
-// --- NOVO: Funkcija za učitavanje povijesti iz pozadine ---
+// ---------------------------------------------------------------------------
+// Funkcija za učitavanje povijesti iz pozadine (CSV datoteka)
+// ---------------------------------------------------------------------------
 async function loadHistory() {
     try {
         const response = await fetch('/api/history');
         const text = await response.text();
         
-        if (!text) return; // Ako je datoteka prazna
+        if (!text) return; 
 
         const lines = text.trim().split('\n');
         
-        // Uzimamo zadnjih 50 zapisa iz datoteke da ne zagušimo graf
         const lastLines = lines.slice(-50); 
 
         lastLines.forEach((line, index) => {
             const parts = line.split(',');
             if (parts.length === 2) {
-                // Budući da u CSV-u nemamo točno vrijeme (osim ako ga ne šalješ),
-                // stavit ćemo oznaku "P" (Povijest) ili ostaviti prazno
                 sensorChart.data.labels.push("H" + index); 
                 sensorChart.data.datasets[0].data.push(parseFloat(parts[0]));
                 sensorChart.data.datasets[1].data.push(parseFloat(parts[1]));
@@ -65,6 +70,9 @@ async function loadHistory() {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Funkcija za periodičko osvježavanje podataka u stvarnom vremenu
+// ---------------------------------------------------------------------------
 async function updateData() {
     try {
         const response = await fetch('/data'); 
@@ -82,7 +90,6 @@ async function updateData() {
             statusEl.style.color = "#2ecc71";
         }
 
-        // Drži maksimalno 50 točaka na ekranu (uključujući povijest)
         if (sensorChart.data.labels.length > 50) {
             sensorChart.data.labels.shift();
             sensorChart.data.datasets[0].data.shift();
@@ -104,9 +111,8 @@ async function updateData() {
     }
 }
 
-// POKRETANJE
+
 loadHistory().then(() => {
-    // Tek nakon što se učita povijest, kreni s ažuriranjem uživo
     setInterval(updateData, 5000);
     updateData();
 });

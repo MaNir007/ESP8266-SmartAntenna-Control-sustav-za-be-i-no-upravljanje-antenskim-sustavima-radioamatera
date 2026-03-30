@@ -1,29 +1,34 @@
-/* common.css - Globalni stilovi i varijable za cijelu aplikaciju */
+/* --------------------------------------------------------------------------- */
+/* common.css - Globalni stilovi i varijable za cijelu aplikaciju              */
+/* --------------------------------------------------------------------------- */
+/* Sadrži osnovne CSS varijable, resetiranja stilova i globalne klase         */
+/* koje se koriste na svim stranicama web sučelja.                             */
+/* --------------------------------------------------------------------------- */
 
-/* Uvoz Google Fonts */
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
-/* Osnovne varijable za boje i razmake */
-:root {
-    --primary-color: #3498db; /* Svijetlo plava */
-    --primary-color-rgb: 52, 152, 219; /* RGB za primarnu boju (za rgba sjene) */
-    --secondary-color: #27ae60; /* Tamno zelena (prethodno je bila #422ecc - plava, promijenjeno da se slaže s common.css logikom) */
-    --tertiary-color: #e74c3c; /* Crvena (upozorenje/greška) */
-    --tertiary-color-rgb: 231, 76, 60; /* RGB za tercijarnu boju */
-    --warning-color: #f39c12; /* Narančasta (upozorenje/povezivanje) */
-    --background-light: #f4f7f6; /* Vrlo svijetla pozadina */
-    --background-dark: #0f83a0; /* Nešto tamnija pozadina */
-    --card-background: #ffffff; /* Bijela pozadina kartica */
-    --text-color-dark: #2c3e50; /* Tamno siva za glavni tekst */
-    --text-color-light: #5e6b7c; /* Svijetlija siva za sporedni tekst */
-    --border-color: #e0e0e0; /* Svijetlo siva za obrube */
-    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lagana sjena */
-    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); /* Jača sjena za hover */
-    --border-radius: 12px; /* Zaobljeni kutovi */
-    --border-radius-small: 8px; /* Manji zaobljeni kutovi */
-    --input-focus-border: var(--primary-color); /* Boja obruba inputa pri fokusu */
 
-    /* Dodatne varijable za poruke */
+:root {
+    --primary-color: #3498db; 
+    --primary-color-rgb: 52, 152, 219; 
+    --secondary-color: #27ae60; 
+    --tertiary-color: #e74c3c; 
+    --tertiary-color-rgb: 231, 76, 60; 
+    --warning-color: #f39c12; 
+    --background-light: #f4f7f6; 
+    --background-dark: #0f83a0; 
+    --card-background: #ffffff; 
+    --text-color-dark: #2c3e50; 
+    --text-color-light: #5e6b7c; 
+    --border-color: #e0e0e0; 
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); 
+    --border-radius: 12px; 
+    --border-radius-small: 8px; 
+    --input-focus-border: var(--primary-color); 
+
+
     --success-color: #28a745;
     --success-color-light: #d4edda;
     --success-color-dark: #155724;
@@ -36,12 +41,12 @@
     --warning-color-light: #fff3cd;
     --warning-color-dark: #856404;
 
-    /* RGB vrijednosti za sjene (ako se koriste u rgba) */
-    --secondary-color-rgb: 39, 174, 96; /* RGB za secondary-color (zelena) */
+
+    --secondary-color-rgb: 39, 174, 96; 
 }
 
-/* Globalna stilizacija */
-body {
+
+    body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
@@ -50,27 +55,27 @@ body {
     line-height: 1.6;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Poravnaj na vrh */
+    align-items: flex-start; 
     min-height: 100vh;
-    box-sizing: border-box; /* Padding i border uključeni u veličinu */
-    -webkit-font-smoothing: antialiased; /* Bolji prikaz fonta */
+    box-sizing: border-box; 
+    -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Kontejner za cijelu stranicu */
+
 .container {
     width: 100%;
     max-width: 960px;
     margin: 30px auto;
     padding: 25px;
-    background-color: transparent; /* Pozadina kontejnera je transparentna da se vidi body gradient */
+    background-color: transparent; 
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Razmak između sekcija */
+    gap: 25px; 
 }
 
-/* Header stilizacija */
+
 header {
     text-align: center;
     padding-bottom: 20px;
@@ -110,7 +115,7 @@ header h1 .fas {
     color: var(--primary-color);
 }
 
-/* Status veze LED */
+
 .connection-status-wrapper {
     margin-top: 15px;
     font-weight: 500;
@@ -120,17 +125,17 @@ header h1 .fas {
     gap: 8px;
     font-size: 1em;
 }
-/* Promijenjeno na općenitije klase za status indikaciju */
+
 .status-connected { color: var(--secondary-color); }
 .status-disconnected { color: var(--tertiary-color); }
-.status-connecting { color: var(--warning-color); } /* Narančasta */
+.status-connecting { color: var(--warning-color); } 
 
 .status-connected .fas, .status-disconnected .fas, .status-connecting .fas {
     margin-right: 5px;
     font-size: 0.8em;
 }
 
-/* Kartice - vizualni odjeljci */
+
 .card {
     background-color: var(--card-background);
     border-radius: var(--border-radius);
@@ -229,7 +234,7 @@ header h1 .fas {
     transform-origin: left;
 }
 
-/* Gumbi - osnovni stil */
+
 .button {
     border: none;
     color: white;
@@ -256,10 +261,10 @@ header h1 .fas {
 }
 
 .button .icon {
-    font-size: 1.2em; /* Povećaj veličinu ikone */
+    font-size: 1.2em; 
 }
 
-/* Varijante gumba */
+
 .button.primary {
     background-color: var(--primary-color);
 }
@@ -271,14 +276,14 @@ header h1 .fas {
     background-color: var(--secondary-color);
 }
 .button.secondary:hover {
-    background-color: #219955; /* Tamnija zelena */
+    background-color: #219955; 
 }
 
 .button.tertiary {
     background-color: var(--tertiary-color);
 }
 .button.tertiary:hover {
-    background-color: #c0392b; /* Tamnija crvena */
+    background-color: #c0392b; 
 }
 
 .button.warning {
@@ -288,9 +293,9 @@ header h1 .fas {
     background-color: #e67e22;
 }
 
-/* Footer stilizacija */
+
 footer {
-    color: var(--text-color-light); /* Tekst u footeru svjetlije sive */
+    color: var(--text-color-light); 
     text-align: center;
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
@@ -303,13 +308,13 @@ footer p {
 }
 
 footer a {
-    color: var(--text-color-light); /* Linkovi u footeru primarne boje */
+    color: var(--text-color-light); 
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 footer a:hover {
-    color: var(--primary-color); /* Hover boja za linkove */
+    color: var(--primary-color); 
     text-decoration: underline;
 }
 
@@ -333,11 +338,11 @@ footer a:hover {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--text-color-light); /* Boja linkova */
+    color: var(--text-color-light); 
 }
 
 .footer-links a:hover {
-    color: var(--primary-color); /* Hover boja linkova */
+    color: var(--primary-color); 
 }
 
 .footer-links .fas {
@@ -348,30 +353,30 @@ footer a:hover {
     opacity: 0.8;
 }
 
-/* Dodaj ovo negdje u svoj CSS file, npr. common.css ili index.css */
+
 .geo-status {
     display: flex;
     align-items: center;
-    gap: 8px; /* Razmak između LED-a i teksta */
-    margin-top: 5px; /* Mali razmak od gornjih vrijednosti */
+    gap: 8px; 
+    margin-top: 5px; 
     font-size: 0.9em;
 }
 
-/* Ostatak .led stilova bi već trebao postojati, ali provjeri ih */
+
 .led {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: var(--color-gray); /* Default boja */
+    background-color: var(--color-gray); 
     display: inline-block;
-    flex-shrink: 0; /* Ne smanjuje se */
+    flex-shrink: 0; 
 }
 
-.led.green { background-color: var(--color-success); } /* Zelena */
-.led.red { background-color: var(--color-error); }     /* Crvena */
-.led.yellow { background-color: var(--color-warning); } /* Žuta */
+.led.green { background-color: var(--color-success); } 
+.led.red { background-color: var(--color-error); }     
+.led.yellow { background-color: var(--color-warning); } 
 
-/* --- Global Responsive Adjustments --- */
+
 @media (max-width: 992px) {
     .container {
         padding: 20px;

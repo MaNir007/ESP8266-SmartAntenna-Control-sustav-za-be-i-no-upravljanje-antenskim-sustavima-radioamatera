@@ -1,10 +1,9 @@
-/**
- * @file web_server.cpp
- * @brief Implementacija web server modula.
- * @details Ovaj modul je odgovoran za pokretanje ESP8266 web servera,
- * definiranje ruta za statičke datoteke (HTML, CSS, JS) te rukovanje 
- * API zahtjevima za senzore, antenu, vrijeme i evidenciju radio veza (logove).
- */
+// ---------------------------------------------------------------------------
+// web_server.cpp - Web Server & REST API Implementation
+// ---------------------------------------------------------------------------
+// Modul koji upravlja svim dolaznim HTTP zahtjevima, servira web sučelje 
+// (HTML/JS/CSS) i pruža REST API za kontrolu antene i očitanje senzora.
+// ---------------------------------------------------------------------------
 
 #include "web_server.h"
 #include "../config/config.h"
@@ -20,12 +19,13 @@
 
 extern ESP8266WebServer server;
 
-// --- POMOĆNE FUNKCIJE ---
+// ---------------------------------------------------------------------------
+// POMOĆNE FUNKCIJE ZA WEB SERVER
+// ---------------------------------------------------------------------------
 
-/**
- * @brief Obrada zahtjeva za početnu stranicu (Root - "/").
- * Prikazuje index.html ili vraća grešku ako datoteka ne postoji.
- */
+// ---------------------------------------------------------------------------
+// Obrada zahtjeva za početnu stranicu (Root - "/")
+// ---------------------------------------------------------------------------
 void handleRoot() {
     if (LittleFS.exists("/index.html")) {
         File file = LittleFS.open("/index.html", "r");
@@ -36,10 +36,9 @@ void handleRoot() {
     }
 }
 
-/**
- * @brief Obrada nepostojećih ruta (404 Not Found).
- * Pokušava pronaći traženu datoteku u LittleFS-u, ako ne uspije vraća 404 grešku.
- */
+// ---------------------------------------------------------------------------
+// Obrada nepostojećih ruta (404 Not Found)
+// ---------------------------------------------------------------------------
 void handleNotFound() {
     String path = server.uri();
     String contentType = getContentType(path);
@@ -52,24 +51,25 @@ void handleNotFound() {
     server.send(404, "text/plain", "404 Nije pronadjeno: " + path);
 }
 
-// --- API ZA GRAFIKON (Novo i usklađeno s data_graf.js) ---
+// ---------------------------------------------------------------------------
+// API ZA GRAFIKON I SENZORE
+// ---------------------------------------------------------------------------
 
-/**
- * @brief Vraća trenutne podatke senzora (temperatura i vlaga) za gafikon u obliku JSON-a.
- */
+// ---------------------------------------------------------------------------
+// Vraća trenutne podatke senzora za grafikon (JSON)
+// ---------------------------------------------------------------------------
 void handleDataGraf() {
     float temperature = getTemperature();
     float humidity = getHumidity();
 
     JsonDocument doc; 
-    // Ako senzor ne radi, šaljemo 0 da graf ne pukne
     if (temperature == -999.0 || humidity == -999.0) {
         doc["temp"] = 0.0;
         doc["hum"] = 0.0;
         doc["error"] = "Senzor nedostupan";
     } else {
-        doc["temp"] = temperature; // Ključ mora biti "temp" za JS
-        doc["hum"] = humidity;     // Ključ mora biti "hum" za JS
+        doc["temp"] = temperature; 
+        doc["hum"] = humidity;     
     }
 
     String res;
@@ -77,32 +77,25 @@ void handleDataGraf() {
     server.send(200, "application/json", res);
 }
 
-// --- NOVO: Rukovanje povijesnim podacima za grafikon ---
 
-/**
- * @brief Vraća povijesne podatke (CSV) za iscrtavanje grafova.
- */
+
 void handleGetHistory() {
-    // Dohvaćamo sadržaj CSV datoteke koju main.cpp puni u pozadini
-    String history = getLogContent("/data_log.csv");
-    
-    // Šaljemo kao običan tekst (CSV), klijent će to sam parsirati
-    server.send(200, "text/plain", history);
+    server.send(200, "text/plain", getLogContent("/data_log.csv"));
 }
 
-/**
- * @brief Briše CSV datoteku s povijesnim podacima mjerenja.
- */
+// ---------------------------------------------------------------------------
+// Briše CSV datoteku s povijesnim podacima mjerenja
+// ---------------------------------------------------------------------------
 void handleClearHistory() {
     clearLog("/data_log.csv");
     server.send(200, "text/plain", "OK");
 }
 
-// --- API ZA SENZORE I VRIJEME ---
 
-/**
- * @brief API ruta koja vraća trenutna očitanja svih senzora (temperatura, vlaga, napon).
- */
+
+// ---------------------------------------------------------------------------
+// API ruta koja vraća trenutna očitanja svih senzora
+// ---------------------------------------------------------------------------
 void handleSensorReadings() {
     float temperature = getTemperature();
     float humidity = getHumidity();
@@ -125,9 +118,9 @@ void handleSensorReadings() {
     server.send(200, "application/json", res);
 }
 
-/**
- * @brief API ruta za dohvaćanje trenutnog UTC formata s uređaja.
- */
+// ---------------------------------------------------------------------------
+// API ruta za dohvaćanje trenutnog UTC formata
+// ---------------------------------------------------------------------------
 void handleUtcTime() {
     JsonDocument doc;
     doc["time"] = getFormattedUTCTime();
@@ -136,11 +129,11 @@ void handleUtcTime() {
     server.send(200, "application/json", res);
 }
 
-// --- API ZA ANTENU I STEPER ---
 
-/**
- * @brief Vraća informacije o statusu/tipu trenutno odabrane antene.
- */
+
+// ---------------------------------------------------------------------------
+// Vraća informacije o statusu/tipu trenutno odabrane antene
+// ---------------------------------------------------------------------------
 void handleAntennaStatus() {
     JsonDocument doc;
     doc["status"] = getAntennaType();
@@ -149,9 +142,9 @@ void handleAntennaStatus() {
     server.send(200, "application/json", res);
 }
 
-/**
- * @brief Omogućava postavljanje vrste antene putem POST zahtjeva.
- */
+// ---------------------------------------------------------------------------
+// Postavljanje vrste antene putem POST zahtjeva
+// ---------------------------------------------------------------------------
 void handleSetAntenna() {
     if (server.hasArg("plain")) {
         JsonDocument doc;
@@ -162,9 +155,9 @@ void handleSetAntenna() {
     }
 }
 
-/**
- * @brief Pokazuje trenutni kut servo motora.
- */
+// ---------------------------------------------------------------------------
+// Vraća trenutni kut servo motora
+// ---------------------------------------------------------------------------
 void handleServoAngle() {
     JsonDocument doc;
     doc["angle"] = getCurrentServoAngle();
@@ -173,9 +166,9 @@ void handleServoAngle() {
     server.send(200, "application/json", res);
 }
 
-/**
- * @brief Postavlja novi kut servo motora.
- */
+// ---------------------------------------------------------------------------
+// Postavlja novi kut servo motora
+// ---------------------------------------------------------------------------
 void handleSetAngle() {
     if (server.hasArg("plain")) {
         JsonDocument doc;
@@ -186,26 +179,26 @@ void handleSetAngle() {
     }
 }
 
-/**
- * @brief Ruta za pozivanje kalibracije servo motora.
- */
+// ---------------------------------------------------------------------------
+// Kalibracija servo motora
+// ---------------------------------------------------------------------------
 void handleCalibrateServo() {
     calibrateServo();
     server.send(200, "text/plain", "OK");
 }
 
-// --- LOG MANAGER API ---
 
-/**
- * @brief Dohvaća sve spremljene logove u JSON formatu.
- */
+
+// ---------------------------------------------------------------------------
+// Dohvaća sve spremljene logove u JSON formatu
+// ---------------------------------------------------------------------------
 void handleGetLogs() {
     server.send(200, "application/json", getAllLogsAsJson());
 }
 
-/**
- * @brief API za spremanje novog unosa (veze) u evidenciju.
- */
+// ---------------------------------------------------------------------------
+// API za spremanje novog unosa (veze) u evidenciju
+// ---------------------------------------------------------------------------
 void handleSaveLog() {
     if (server.hasArg("plain")) {
         JsonDocument doc;
@@ -213,43 +206,44 @@ void handleSaveLog() {
         LogEntry entry;
         entry.time = doc["time"].as<String>();
         entry.callsign = doc["callsign"].as<String>();
-        entry.country = doc["country"].as<String>(); // FIX: Dodan unos za državu!
+        entry.country = doc["country"].as<String>(); 
         entry.name = doc["name"].as<String>();
         entry.frequency = doc["frequency"].as<float>();
         entry.modulation = doc["modulation"].as<String>();
         entry.rstSent = doc["rstSent"].as<String>();
         entry.rstReceived = doc["rstReceived"].as<String>();
         entry.qthlocator = doc["qthlocator"].as<String>();
+        entry.sentNr = doc["sentNr"].as<String>();
+        entry.rcvdNr = doc["rcvdNr"].as<String>();
         entry.notes = doc["notes"].as<String>();
         addLog(entry);
         server.send(200, "text/plain", "OK");
     }
 }
 
-/**
- * @brief Api za pojedinačno brisanje loga pomoću indeksa.
- */
+// ---------------------------------------------------------------------------
+// Pojedinačno brisanje loga pomoću indeksa
+// ---------------------------------------------------------------------------
 void handleDeleteLog() {
     int index = server.arg("index").toInt();
     if (deleteLog(index)) server.send(200, "text/plain", "OK");
     else server.send(400, "text/plain", "Greska");
 }
 
-/**
- * @brief Ruta koja briše apsolutno sve logove.
- */
+// ---------------------------------------------------------------------------
+// Brisanje apsolutno svih logova
+// ---------------------------------------------------------------------------
 void handleClearAllLogs() {
     clearAllLogs();
     server.send(200, "text/plain", "OK");
 }
 
-// --- INICIJALIZACIJA ---
 
-/**
- * @brief Inicijalizacija svih ruta web servera i definiranje HTTP metoda (GET, POST).
- */
+
+// ---------------------------------------------------------------------------
+// Inicijalizacija web servera i ruta
+// ---------------------------------------------------------------------------
 void initWebServer() {
-    // Osnovne stranice
     server.on("/", HTTP_GET, handleRoot);
     
     server.on("/logger", HTTP_GET, []() {
@@ -260,12 +254,10 @@ void initWebServer() {
         }
     });
 
-    // Rute za grafikon
     server.on("/data", HTTP_GET, handleDataGraf);
-    server.on("/api/history", HTTP_GET, handleGetHistory);           // NOVO: Dohvat CSV povijesti
-    server.on("/api/clear_history", HTTP_GET, handleClearHistory);   // NOVO: Brisanje grafikona
+    server.on("/api/history", HTTP_GET, handleGetHistory);           
+    server.on("/api/clear_history", HTTP_GET, handleClearHistory);   
 
-    // API Rute
     server.on("/api/sensor_readings", HTTP_GET, handleSensorReadings);
     server.on("/api/antenna_status", HTTP_GET, handleAntennaStatus);
     server.on("/api/set_antenna", HTTP_POST, handleSetAntenna);
@@ -274,7 +266,6 @@ void initWebServer() {
     server.on("/api/calibrate_servo", HTTP_POST, handleCalibrateServo);
     server.on("/api/utc_time", HTTP_GET, handleUtcTime);
 
-    // Logger Rute
     server.on("/logs", HTTP_GET, handleGetLogs);
     server.on("/save_log", HTTP_POST, handleSaveLog);
     server.on("/delete_log", HTTP_GET, handleDeleteLog);
@@ -286,9 +277,9 @@ void initWebServer() {
     Serial.println("Web server spreman! Podrška za povijest grafikona omogućena.");
 }
 
-/**
- * @brief Petlja web servera za posluživanje klijentskih zahtjeva (mora se pozivati unutar loop-a).
- */
+// ---------------------------------------------------------------------------
+// Posluživanje klijentskih zahtjeva (handleClient)
+// ---------------------------------------------------------------------------
 void handleClientRequests() {
     server.handleClient();
 }

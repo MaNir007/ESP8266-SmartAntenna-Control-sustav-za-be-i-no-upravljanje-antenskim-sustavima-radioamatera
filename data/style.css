@@ -1,30 +1,36 @@
-/* data/style.css - Potpuno stiliziran CSS */
+/* --------------------------------------------------------------------------- */
+/* style.css - Globalni sustav dizajna i zajednički stilovi                   */
+/* --------------------------------------------------------------------------- */
+/* Definira CSS varijable, tipografiju, globalni layout kontejnera,           */
+/* izgled kartica, gumba te zajedničke komponente poput LED indikatora.       */
+/* --------------------------------------------------------------------------- */
 
-/* Uvoz Google Fonts */
+
+
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
-/* Osnovne varijable za boje i razmake */
+
 :root {
-    --primary-color: #3498db; /* Svijetlo plava */
+    --primary-color: #3498db; 
     --secondary-color: #422ecc;
-    --tertiary-color: #e74c3c; /* Crvena (upozorenje/greška) */
-    --warning-color: #f39c12; /* Narančasta (upozorenje/povezivanje) */
-    --background-light: #f4f7f6; /* Vrlo svijetla pozadina */
-    --background-dark: #0f83a0; /* Nešto tamnija pozadina */
-    --card-background: #ffffff; /* Bijela pozadina kartica */
-    --text-color-dark: #2c3e50; /* Tamno siva za glavni tekst */
-    --text-color-light: #5e6b7c; /* Svijetlija siva za sporedni tekst */
-    --border-color: #e0e0e0; /* Svijetlo siva za obrube */
-    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lagana sjena */
-    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); /* Jača sjena za hover */
-    --border-radius: 12px; /* Zaobljeni kutovi */
-    --input-focus-border: var(--primary-color); /* Boja obruba inputa pri fokusu */
+    --tertiary-color: #e74c3c; 
+    --warning-color: #f39c12; 
+    --background-light: #f4f7f6; 
+    --background-dark: #0f83a0; 
+    --card-background: #ffffff; 
+    --text-color-dark: #2c3e50; 
+    --text-color-light: #5e6b7c; 
+    --border-color: #e0e0e0; 
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); 
+    --border-radius: 12px; 
+    --input-focus-border: var(--primary-color); 
 
     --logger-button-color: red
 }
 
-/* Globalna stilizacija */
-body {
+
+    body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
@@ -33,27 +39,27 @@ body {
     line-height: 1.6;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Poravnaj na vrh */
+    align-items: flex-start; 
     min-height: 100vh;
-    box-sizing: border-box; /* Padding i border uključeni u veličinu */
-    -webkit-font-smoothing: antialiased; /* Bolji prikaz fonta */
+    box-sizing: border-box; 
+    -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Kontejner za cijelu stranicu */
+
 .container {
     width: 100%;
     max-width: 960px;
     margin: 30px auto;
     padding: 25px;
-    background-color: transparent; /* Pozadina kontejnera je transparentna da se vidi body gradient */
+    background-color: transparent; 
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Razmak između sekcija */
+    gap: 25px; 
 }
 
-/* Header stilizacija */
+
 header {
     text-align: center;
     padding-bottom: 20px;
@@ -83,7 +89,7 @@ header h1 .fas {
     font-weight: 500;
 }
 
-/* Status veze LED */
+
 .connection-status-wrapper {
     margin-top: 15px;
     font-weight: 500;
@@ -96,14 +102,14 @@ header h1 .fas {
 
 .status-connected { color: var(--secondary-color); }
 .status-disconnected { color: var(--tertiary-color); }
-.status-connecting { color: var(--warning-color); } /* Narančasta */
+.status-connecting { color: var(--warning-color); } 
 
 .status-connected .fas, .status-disconnected .fas, .status-connecting .fas {
     margin-right: 5px;
     font-size: 0.8em;
 }
 
-/* Glavni sadržaj */
+
 main {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -117,7 +123,7 @@ logger{
     justify-items: center;
 }
 
-/* Kartice - vizualni odjeljci */
+
 .card {
     background-color: var(--card-background);
     border-radius: var(--border-radius);
@@ -216,7 +222,7 @@ logger{
     transform-origin: left;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
     .card {
         padding: 20px;
@@ -228,7 +234,7 @@ logger{
     }
 }
 
-/* Gumbi - osnovni stil */
+
 .button {
     border: none;
     color: white;
@@ -254,10 +260,10 @@ logger{
 }
 
 .button .icon {
-    font-size: 1.2em; /* Povećaj veličinu ikone */
+    font-size: 1.2em; 
 }
 
-/* Varijante gumba */
+
 .button.primary {
     background-color: var(--primary-color);
 }
@@ -286,7 +292,7 @@ logger{
     background-color: #e67e22;
 }
 
-/* Specifični stilovi za gumbe antene */
+
 .antenna-selector {
     display: flex;
     gap: 10px;
@@ -296,8 +302,8 @@ logger{
 }
 
 .btn-antenna {
-    flex-grow: 1; /* Omogući da gumbi popune prostor */
-    background-color: #bdc7bd; /* Siva */
+    flex-grow: 1; 
+    background-color: #bdc7bd; 
     color: var(--text-color-dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -305,12 +311,12 @@ logger{
     background-color: #95a5a6;
 }
 .btn-antenna.active {
-    background-color: var(--primary-color); /* Plava kada je aktivna */
+    background-color: var(--primary-color); 
     color: white;
     box-shadow: var(--shadow-light);
 }
 
-/* LED indikator */
+
 .status-indicator {
     display: flex;
     align-items: center;
@@ -320,25 +326,25 @@ logger{
 }
 
 .led {
-    width: 18px; /* Malo veći LED */
+    width: 18px; 
     height: 18px;
     border-radius: 50%;
-    background-color: #ccc; /* Default boja */
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2); /* Veći unutarnji shadow */
+    background-color: #ccc; 
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2); 
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .led.active-gp {
-    background-color: var(--tertiary-color); /* Zelena za GP */
-    box-shadow: 0 0 10px var(--secondary-color), inset 0 0 6px rgba(0, 0, 0, 0.2); /* Veći sjaj */
+    background-color: var(--tertiary-color); 
+    box-shadow: 0 0 10px var(--secondary-color), inset 0 0 6px rgba(0, 0, 0, 0.2); 
 }
 
 .led.active-yagi {
-    background-color: var(--primary-color); /* Plava za Yagi */
-    box-shadow: 0 0 10px var(--primary-color), inset 0 0 6px rgba(0, 0, 0, 0.2); /* Veći sjaj */
+    background-color: var(--primary-color); 
+    box-shadow: 0 0 10px var(--primary-color), inset 0 0 6px rgba(0, 0, 0, 0.2); 
 }
 
-/* Senzorski podaci */
+
 .sensor-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -359,7 +365,7 @@ logger{
 }
 
 .sensor-icon {
-    font-size: 2.5em; /* Malo veće ikone */
+    font-size: 2.5em; 
     color: var(--primary-color);
 }
 
@@ -367,17 +373,17 @@ logger{
     margin: 0;
     font-weight: 500;
     color: var(--text-color-light);
-    font-size: 0.95em; /* Malo veći font */
+    font-size: 0.95em; 
 }
 
 .sensor-value {
     margin: 0;
-    font-size: 1.6em; /* Veći font za vrijednosti */
+    font-size: 1.6em; 
     font-weight: 700;
     color: var(--text-color-dark);
 }
 
-/* Kontrola rotacije */
+
 .control-group {
     width: 100%;
     margin-bottom: 20px;
@@ -392,15 +398,13 @@ logger{
 }
 
 .slider {
-    /* Za WebKit (Chrome, Safari) */
     -webkit-appearance: none;
-    /* Standardna CSS svojstva */
     appearance: none; 
     width: 100%;
-    height: 12px; /* Malo deblji slider */
+    height: 12px; 
     background: #dcdcdc;
     outline: none;
-    border-radius: 6px; /* Zaobljeni rubovi slidera */
+    border-radius: 6px; 
     opacity: 0.9;
     transition: opacity .2s ease-in-out;
 }
@@ -412,14 +416,14 @@ logger{
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px; /* Malo veći thumb */
+    width: 28px; 
     height: 28px;
     border-radius: 50%;
     background: var(--primary-color);
     cursor: grab;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Jača sjena thumba */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); 
     transition: background-color 0.2s ease, transform 0.2s ease;
-    border: 3px solid var(--card-background); /* Bijeli obrub thumba */
+    border: 3px solid var(--card-background); 
 }
 
 .slider::-webkit-slider-thumb:active {
@@ -454,29 +458,29 @@ logger{
 }
 
 .angle-input input[type="number"] {
-    width: 90px; /* Malo širi input */
+    width: 90px; 
     padding: 10px;
     border: 1px solid var(--border-color);
-    border-radius: 8px; /* Više zaobljeni */
+    border-radius: 8px; 
     text-align: center;
-    font-size: 1.2em; /* Veći font */
+    font-size: 1.2em; 
     color: var(--text-color-dark);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .angle-input input[type="number"]:focus {
     border-color: var(--input-focus-border);
-    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3); /* Jača sjena fokusa */
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3); 
     outline: none;
 }
 
 .angle-input span {
-    font-size: 1.3em; /* Veći font */
+    font-size: 1.3em; 
     font-weight: 500;
     color: var(--text-color-dark);
 }
 
-/* Kompas stilizacija */
+
 .compass-container {
     display: flex;
     flex-direction: column;
@@ -488,43 +492,42 @@ logger{
 
 .compass {
     position: relative;
-    width: 250px; /* Veći kompas */
+    width: 250px; 
     height: 250px;
     border-radius: 50%;
     background: radial-gradient(circle at 50% 50%, #ffffff, #f0f0f0);
-    border: 6px solid var(--text-color-dark); /* Deblji obrub */
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.25); /* Jače sjene */
+    border: 6px solid var(--text-color-dark); 
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.25); 
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 25px;
-    overflow: hidden; /* Osiguraj da strelica ostaje unutar kruga */
+    overflow: hidden; 
 }
 
-/* Kompas ruža vjetrova - koristi pozadinsku sliku za bolji izgled */
 .compass-rose {
     position: absolute;
-    width: 90%; /* Manja od kruga da se vidi obrub */
+    width: 90%; 
     height: 90%;
     border-radius: 50%;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="225" height="225" viewBox="0 0 225 225"><circle cx="112.5" cy="112.5" r="100" fill="none" stroke="%23ccc" stroke-width="1.5"/><line x1="112.5" y1="12.5" x2="112.5" y2="27.5" stroke="%23555" stroke-width="2"/><text x="112.5" y="47.5" text-anchor="middle" font-size="18" fill="%23e74c3c" font-weight="bold">N</text><line x1="112.5" y1="212.5" x2="112.5" y2="197.5" stroke="%23555" stroke-width="2"/><text x="112.5" y="190" text-anchor="middle" font-size="18" fill="%23555">S</text><line x1="12.5" y1="112.5" x2="27.5" y2="112.5" stroke="%23555" stroke-width="2"/><text x="40" y="117.5" text-anchor="middle" font-size="18" fill="%23555">W</text><line x1="212.5" y1="112.5" x2="197.5" y2="112.5" stroke="%23555" stroke-width="2"/><text x="185" y="117.5" text-anchor="middle" font-size="18" fill="%23555">E</text><circle cx="112.5" cy="112.5" r="5" fill="%237f8c8d"/><line x1="112.5" y1="112.5" x2="112.5" y2="25" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="200" y2="112.5" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="25" y2="112.5" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="112.5" y2="200" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/></svg>');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
-    z-index: 1; /* Ispod strelice i prikaza kuta */
+    z-index: 1; 
 }
 
 .compass-arrow {
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 15px solid transparent; /* Šira strelica */
+    border-left: 15px solid transparent; 
     border-right: 15px solid transparent;
-    border-bottom: 110px solid var(--tertiary-color); /* Crvena strelica */
-    top: 10px; /* Podesi poziciju da stane unutar kruga */
+    border-bottom: 110px solid var(--tertiary-color); 
+    top: 10px; 
     transform-origin: bottom center;
     transition: transform 0.3s ease-out;
-    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4)); /* Jača sjena */
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4)); 
     z-index: 5;
 }
 
@@ -533,19 +536,19 @@ logger{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2.2em; /* Veći font */
+    font-size: 2.2em; 
     font-weight: 700;
     color: var(--text-color-dark);
     background-color: var(--card-background);
     border-radius: 50%;
-    width: 85px; /* Veći krug */
+    width: 85px; 
     height: 85px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Jača sjena */
-    z-index: 10; /* Osiguraj da je iznad strelice */
-    border: 3px solid var(--primary-color); /* Dodaj obrub */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+    z-index: 10; 
+    border: 3px solid var(--primary-color); 
 }
 
 /* Footer stilizacija */
@@ -562,9 +565,9 @@ footer p {
     margin: 5px 0;
 }
 
-/* --- Stilovi specifični za Logger stranicu --- */
 
-/* Poruka o stanju forme (uspjeh, greška, upozorenje) */
+
+
 .message-area {
     margin-bottom: 20px;
     padding: 12px 20px;
@@ -572,7 +575,7 @@ footer p {
     font-size: 1em;
     font-weight: 500;
     text-align: center;
-    opacity: 0; /* Početno skriveno */
+    opacity: 0; 
     transform: translateY(-10px);
     transition: opacity 0.3s ease-out, transform 0.3s ease-out;
 }
@@ -600,7 +603,7 @@ footer p {
     border: 1px solid #ffeeba;
 }
 
-/* Forma za logiranje */
+
 .log-form-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -610,7 +613,7 @@ footer p {
 
 .form-group {
     margin-bottom: 15px;
-    text-align: left; /* Poravnaj labele lijevo */
+    text-align: left; 
 }
 
 .form-group label {
@@ -625,7 +628,7 @@ footer p {
 .form-group input[type="number"],
 .form-group select,
 .form-group textarea {
-    width: calc(100% - 24px); /* Podesi širinu za padding */
+    width: calc(100% - 24px); 
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
@@ -655,7 +658,7 @@ footer p {
     margin-top: 20px;
 }
 
-/* Tablica */
+
 .log-table-container {
     border-radius: var(--border-radius);
     overflow: hidden;
@@ -717,7 +720,7 @@ footer p {
     transform: scale(1.1);
 }
 
-/* Footer tablice */
+
 .table-footer {
     display: flex;
     gap: 0.75rem;
@@ -754,7 +757,7 @@ footer p {
     background-color: var(--logger-button-color);
 }
 
-/* Responsivnost */
+
 @media (max-width: 768px) {
     .log-table th, 
     .log-table td {
@@ -770,7 +773,7 @@ footer p {
     }
 }
 
-/* Poruka kada nema logova */
+
 .no-logs-message {
     text-align: center;
     padding: 30px;
@@ -786,7 +789,7 @@ footer p {
     display: none;
 }
 
-/* Search input za logove */
+
 .search-container {
     margin-top: 20px;
     margin-bottom: 15px;
@@ -813,7 +816,7 @@ footer p {
     outline: none;
 }
 
-/* --- Responzivni dizajn --- */
+
 @media (max-width: 768px) {
     .container {
         margin: 20px auto;
@@ -840,10 +843,10 @@ footer p {
         font-size: 1.2em;
     }
     .sensor-grid {
-        grid-template-columns: 1fr; /* Jedan stupac na manjim ekranima */
+        grid-template-columns: 1fr; 
     }
     .compass {
-        width: 200px; /* Malo manji kompas */
+        width: 200px; 
         height: 200px;
     }
     .compass-arrow {
@@ -861,57 +864,55 @@ footer p {
         padding: 10px 12px;
     }
     .log-form-grid {
-        grid-template-columns: 1fr; /* Jedan stupac na manjim ekranima */
+        grid-template-columns: 1fr; 
     }
 
-    /* Responzivnost tablice za mobilne uređaje */
     .log-table, .log-table tbody, .log-table tr, .log-table td {
-        display: block; /* Svi elementi se prikazuju kao blokovi */
+        display: block; 
         width: 100%;
     }
 
     .log-table thead {
-        display: none; /* Sakrij zaglavlje tablice */
+        display: none; 
     }
 
     .log-table tr {
         margin-bottom: 15px;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius);
-        overflow: hidden; /* Zaobljeni rubovi */
+        overflow: hidden; 
         box-shadow: var(--shadow-light);
     }
 
     .log-table td {
-        text-align: right; /* Poravnaj sadržaj desno */
-        padding-left: 50%; /* Stvori prostor za labelu */
+        text-align: right; 
+        padding-left: 50%; 
         position: relative;
-        border: none; /* Ukloni individualne obrube ćelija */
-        border-bottom: 1px dashed var(--border-color); /* Dodaj crtkasti obrub između redaka podataka */
+        border: none; 
+        border-bottom: 1px dashed var(--border-color); 
     }
 
     .log-table td:last-child {
-        border-bottom: none; /* Ukloni obrub na zadnjoj ćeliji retka */
+        border-bottom: none; 
     }
 
     .log-table td::before {
-        content: attr(data-label); /* Prikazuje vrijednost iz data-label atributa */
+        content: attr(data-label); 
         position: absolute;
-        left: 15px; /* Poravnaj labelu lijevo */
-        width: calc(50% - 30px); /* Oduzmi padding */
+        left: 15px; 
+        width: calc(50% - 30px); 
         padding-right: 10px;
-        white-space: nowrap; /* Spriječi prelamanje teksta labele */
+        white-space: nowrap; 
         font-weight: 600;
         color: var(--text-color-dark);
         text-align: left;
     }
 
     .log-table td:nth-last-child(1)::before {
-        /* Sakrij data-label za stupac s akcijama (ako želiš, inače ukloni) */
         content: ''; 
     }
     .log-table td:nth-last-child(1) {
-        text-align: center; /* Centriraj gumb za brisanje */
+        text-align: center; 
     }
 }
 
@@ -923,7 +924,7 @@ footer p {
     }
     header h1 {
         font-size: 1.8em;
-        flex-direction: column; /* Naslov i ikona u stupcu */
+        flex-direction: column; 
         gap: 5px;
     }
     header h1 .fas {
@@ -939,13 +940,13 @@ footer p {
         font-size: 1.4em;
     }
     .antenna-selector {
-        flex-direction: column; /* Gumbi za antene u stupcu */
+        flex-direction: column; 
     }
     .angle-input {
         flex-direction: column;
     }
     .angle-input input[type="number"] {
-        width: 100px; /* Dovoljna širina */
+        width: 100px; 
     }
     .button {
         width: 100%;
@@ -954,7 +955,7 @@ footer p {
         font-size: 0.85em;
     }
     .compass {
-        width: 160px; /* Još manji kompas */
+        width: 160px; 
         height: 160px;
     }
     .compass-arrow {
@@ -969,15 +970,15 @@ footer p {
         height: 60px;
     }
     .log-table {
-        font-size: 0.8em; /* Manji font za tablicu */
+        font-size: 0.8em; 
     }
     .log-table td {
         padding: 8px 10px;
-        padding-left: 45%; /* Prilagodi padding za manji ekran */
+        padding-left: 45%; 
     }
     .log-table td::before {
         left: 10px;
-        width: calc(45% - 20px); /* Prilagodi širinu labele */
+        width: calc(45% - 20px); 
     }
 }
 

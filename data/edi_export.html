@@ -1,0 +1,185 @@
+<!-- ---------------------------------------------------------------------------
+  edi_export.html - Konfiguracija EDI (REG1TEST) izvoza
+  ---------------------------------------------------------------------------
+  Forma za unos natjecateljskih podataka potrebnih za generiranje standardne
+  EDI datoteke za radioamaterska VHF/UHF natjecanja.
+  --------------------------------------------------------------------------- -->
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Export EDI (REG1TEST) - SmartAntenna</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="edi_export.css"> 
+</head>
+<body>
+    <div class="edi-container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> EDI (REG1TEST) Export</h1>
+            <p>Ispunite podatke za generiranje natjecateljskog dnevnika.</p>
+        </header>
+
+        <section class="card">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> 
+                Dovršili ste <strong><span id="qsoCount">0</span></strong> veza koje će biti uključene u ovaj izvoz.
+            </div>
+
+            <form id="ediForm">
+                <div class="form-grid">
+                    <h3 class="section-title"><i class="fas fa-info"></i> Osnovni podaci o natjecanju</h3>
+                    
+                    <div class="form-group">
+                        <label for="TName">Naziv natjecanja (TName):</label>
+                        <input type="text" id="TName" name="TName" required placeholder="Npr. IARU1 VHF" value="IARU1 VHF">
+                    </div>
+                    <div class="form-group">
+                        <label for="PBand">Band (PBand):</label>
+                        <select id="PBand" name="PBand" required>
+                            <option value="145 MHz">144 MHz</option>
+                            <option value="432 MHz">432 MHz</option>
+                            <option value="1.3 GHz">1.3 GHz</option>
+                            <option value="2.3 GHz">2.3 GHz</option>
+                            <option value="3.4 GHz">3.4 GHz</option>
+                            <option value="5.7 GHz">5.7 GHz</option>
+                            <option value="10 GHz">10 GHz</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="TDateStart">Početak (YYYYMMDD):</label>
+                        <input type="text" id="TDateStart" name="TDateStart" required pattern="[0-9]{8}" placeholder="20260315">
+                    </div>
+                    <div class="form-group">
+                        <label for="TDateEnd">Završetak (YYYYMMDD):</label>
+                        <input type="text" id="TDateEnd" name="TDateEnd" required pattern="[0-9]{8}" placeholder="20260315">
+                    </div>
+
+                    <h3 class="section-title"><i class="fas fa-id-card"></i> Podaci o postaji</h3>
+                    <div class="form-group">
+                        <label for="PCall">Pozivna oznaka (PCall):</label>
+                        <input type="text" id="PCall" name="PCall" required placeholder="9A5AGN">
+                    </div>
+                    <div class="form-group">
+                        <label for="PWWLo">WW Lokator (PWWLo):</label>
+                        <input type="text" id="PWWLo" name="PWWLo" required pattern="^[A-R]{2}[0-9]{2}[A-X]{2}$" placeholder="JN75XT">
+                    </div>
+                    <div class="form-group">
+                        <label for="PExch">Exchange (PExch):</label>
+                        <input type="text" id="PExch" name="PExch" placeholder="JN75XT" title="Obično isti kao lokator">
+                    </div>
+                    <div class="form-group">
+                        <label for="PSect">Kategorija (PSect):</label>
+                        <select id="PSect" name="PSect" required>
+                            <option value="Single">Single Operator</option>
+                            <option value="Multi">Multi Operator</option>
+                            <option value="6h">6 Hours</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="PAdr1">Oprema/Adresa 1 (PAdr1):</label>
+                        <input type="text" id="PAdr1" name="PAdr1" placeholder="Npr. YAESU FT-8900R">
+                    </div>
+                    <div class="form-group">
+                        <label for="PAdr2">Oprema/Adresa 2 (PAdr2):</label>
+                        <input type="text" id="PAdr2" name="PAdr2" placeholder="Npr. PISAROVINSKA 14">
+                    </div>
+                    <div class="form-group">
+                        <label for="PClub">Klub (PClub):</label>
+                        <input type="text" id="PClub" name="PClub">
+                    </div>
+
+                    <h3 class="section-title"><i class="fas fa-user-tie"></i> Odgovorna osoba</h3>
+                    <div class="form-group">
+                        <label for="RName">Ime i prezime (RName):</label>
+                        <input type="text" id="RName" name="RName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="RCall">Pozivni znak (RCall):</label>
+                        <input type="text" id="RCall" name="RCall" placeholder="Ako je različit od PCall">
+                    </div>
+                    <div class="form-group">
+                        <label for="RHBBS">E-mail (RHBBS):</label>
+                        <input type="email" id="RHBBS" name="RHBBS" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="RPhon">Telefon (RPhon):</label>
+                        <input type="text" id="RPhon" name="RPhon">
+                    </div>
+                    <div class="form-group">
+                        <label for="RAdr1">Ulica (RAdr1):</label>
+                        <input type="text" id="RAdr1" name="RAdr1">
+                    </div>
+                    <div class="form-group">
+                        <label for="RCity">Grad (RCity):</label>
+                        <input type="text" id="RCity" name="RCity">
+                    </div>
+                    <div class="form-group">
+                        <label for="RPoCo">Poštanski broj (RPoCo):</label>
+                        <input type="text" id="RPoCo" name="RPoCo">
+                    </div>
+                    <div class="form-group">
+                        <label for="RCoun">Država (RCoun):</label>
+                        <input type="text" id="RCoun" name="RCoun" value="Croatia">
+                    </div>
+
+                    <h3 class="section-title"><i class="fas fa-broadcast-tower"></i> Tehnički podaci</h3>
+                    <div class="form-group">
+                        <label for="STXEq">Predajnik (STXEq):</label>
+                        <input type="text" id="STXEq" name="STXEq">
+                    </div>
+                    <div class="form-group">
+                        <label for="SRXEq">Prijemnik (SRXEq):</label>
+                        <input type="text" id="SRXEq" name="SRXEq">
+                    </div>
+                    <div class="form-group">
+                        <label for="SPowe">Snaga (W) (SPowe):</label>
+                        <input type="number" id="SPowe" name="SPowe">
+                    </div>
+                    <div class="form-group">
+                        <label for="SAnte">Antena (SAnte):</label>
+                        <input type="text" id="SAnte" name="SAnte">
+                    </div>
+                    <div class="form-group">
+                        <label for="SAntH_Gr">Visina n.t. (m) (SAntH):</label>
+                        <input type="number" id="SAntH_Gr" name="SAntH_Gr" placeholder="Nad tlom">
+                    </div>
+                    <div class="form-group">
+                        <label for="SAntH_Sea">Visina n.m. (m) (SAntH):</label>
+                        <input type="number" id="SAntH_Sea" name="SAntH_Sea" placeholder="Nad morem">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="MOpe">Operatori (razmaknuti):</label>
+                        <input type="text" id="MOpe" name="MOpe" placeholder="9A5AGN 9A1AA">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="Remarks">Napomene (Remarks):</label>
+                        <textarea id="Remarks" name="Remarks" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="button edi btn-generate">
+                    <span class="icon"><i class="fas fa-file-download"></i></span> Generiraj EDI datoteku
+                </button>
+            </form>
+            <div id="formMessage" class="message-area" role="alert" aria-live="polite"></div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 SmartAntenna Project - EDI Export Tool</p>
+                <div class="footer-links">
+                    <a href="logger.html"><i class="fas fa-arrow-left"></i> Povratak u Logger</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="common.js"></script>
+    <script src="edi_export.js"></script>
+</body>
+</html>

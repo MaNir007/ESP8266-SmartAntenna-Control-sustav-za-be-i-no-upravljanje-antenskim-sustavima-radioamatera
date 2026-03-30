@@ -1,114 +1,118 @@
-# 📡 ESP8266 SmartAntenna Control
-### Sustav za bežično upravljanje antenskim sustavima radioamatera (Remote Antenna Switch)
+# 📡 ESP8266 SmartAntenna Control & Logging System
 
-**ESP8266 SmartAntenna Control** je modularni sustav koji omogućuje daljinsko upravljanje antenskim preklopnicima, rotatorima i drugim elementima antenskog sustava pomoću ESP8266 mikrokontrolera.  
-Projekt je namijenjen radioamaterima koji žele **pouzdano, sigurno i jednostavno upravljanje antenama** putem web sučelja, dostupnog s računala, mobitela ili tableta unutar lokalne mreže.  
-Sustav je pogodan kako za **fiksne postaje**, tako i za **terenski rad (POTA / SOTA / portable)**.
+### Professional Radio Amateur Antenna Control, Environmental Monitoring and QSO Logging
 
----
+![Version](https://img.shields.io/badge/version-2.1.0-blue.svg) ![Platform](https://img.shields.io/badge/platform-ESP8266-green.svg) ![Language](https://img.shields.io/badge/language-C%2B%2B%20%2F%20JavaScript-orange.svg)
 
-## 🚀 Glavne značajke
-
-- 🌐 **Web sučelje**  
-  Intuitivno, responzivno web sučelje za upravljanje relejima jednim klikom.
-
-- 📶 **Dva načina rada**
-  - **Station Mode** – spajanje na postojeću kućnu Wi-Fi mrežu  
-  - **Access Point (AP) Mode** – ESP8266 stvara vlastitu Wi-Fi mrežu (idealno za teren)
-
-- 🔄 **Status u realnom vremenu**  
-  Trenutno aktivna antena prikazana je istovremeno na svim povezanim uređajima.
-
-- 🔒 **Interlock zaštita**  
-  Softverska zaštita koja sprječava istovremeno uključivanje više antena.
-
-- 🔄 **OTA (Over-The-Air) ažuriranje**  
-  Bežično ažuriranje firmvera bez USB kabela.
+**SmartAntenna Control** je sveobuhvatan, profesionalni sustav za upravljanje radioamaterskim antenskim sustavima. Uz preciznu kontrolu rotacije antene i prebacivanje između više antena putem web sučelja, sustav integrira napredni radioamaterski dnevnik (QSO Log) s podrškom za izvoz u natjecateljske formate te sustav za praćenje okolišnih uvjeta u realnom vremenu.
 
 ---
 
-## 🛠 Hardverska specifikacija
+## 🚀 Glavne Značajke (Key Features)
 
-| Komponenta | Preporučeni model | Napomena |
-|-----------|------------------|---------|
-| MCU | ESP8266 (NodeMCU / D1 Mini) | 80 MHz / 160 MHz |
-| Releji | 4- ili 8-kanalni relejni modul | Opto-izolirani (preporučeno) |
-| Napajanje | 5 V DC (min. 1 A) | Ovisi o broju releja |
-| RF zaštita | Metalno kućište + feriti | Ključno za rad blizu predajnika |
+### 1. Upravljanje Antenama (Antenna Control)
 
----
+- **Rotacija (Stepper Motor):** Precizno upravljanje usmjerenim antenama (npr. Yagi) pomoću koračnog motora (2048 koraka/okret). Podržana kalibracija nulte točke.
+- **Prebacivanje (Relay Switch):** Trenutno prebacivanje između različitih tipova antena (npr. GP dipol vs Yagi) putem bešumnih releja.
+- **Web UI Control:** Responzivno sučelje s vizualnim prikazom trenutnog statusa.
 
-## 🔌 Shema spajanja (primjer)
+### 2. Profesionalni Radio Dnevnik (Advanced QSO Logger)
 
-- GND → GND relejnog modula
-- D1 → GPIO5 → Relej 1 (Antena 1)
-- D2 → GPIO4 → Relej 2 (Antena 2)
-- D5 → GPIO14 → Relej 3 (Antena 3)
-- D6 → GPIO12 → Relej 4 (Antena 4)
+- **Real-time Prefix Lookup:** Automatsko prepoznavanje države (DXCC), prikaz zastave i statusa (NEW ONE / Worked) na temelju prefiksa pozivne oznake.
+- **QRZ.com Integracija:** Brzi pristup profilu sugovornika jednim klikom.
+- **Maidenhead Locator:** Automatski izračun QTH lokatora (npr. JN75xt) pomoću GPS koordinata.
+- **Višestruki Izvoz (Export):**
+  - **ADIF (.adif):** Standardni format za razmjenu logova (eQSL, LoTW).
+  - **EDI (REG1TEST):** Profesonalni format za VHF/UHF natjecanja (9A Robot/UCXLog).
+  - **CSV (.csv):** Format za analizu podataka u proračunskim tablicama.
 
-> ⚠️ Preporučuje se korištenje kratkih vodiča, feritnih prstenova i odvojenog napajanja.
+### 3. Monitoring i Senzori (Environment Monitoring)
 
----
-
-## 💻 Instalacija i programiranje
-
-### 1️⃣ Priprema razvojnog okruženja
-
-U Arduino IDE (File → Preferences) dodajte sljedeći URL u *Additional Boards Manager URLs*:
-http://arduino.esp8266.com/stable/package_esp8266com_index.json
-
-
-Zatim instalirajte **ESP8266 platformu** putem *Boards Managera*.
+- **Klimatski uvjeti:** DHT22 senzor za temperaturu i relativnu vlažnost zraka.
+- **GPS Pozicioniranje:** Integrirani GPS modul za sinkronizaciju vremena i točne koordinate.
+- **Napon sustava:** Praćenje napona napajanja putem ADC ulaza (A0).
+- **Dijagrami:** Vizualni prikaz povijesti kretanja temperature i vlage u zadnjih 24h.
 
 ---
 
-### 2️⃣ Potrebne biblioteke
+## 🛠 Hardverska Specifikacija (Hardware)
 
-- `ESP8266WiFi`  
-- `ESP8266WebServer`  
-- `ArduinoOTA` *(opcionalno, za OTA)*
+| Komponenta          | Model / Opis                  | Pin (ESP8266)    |
+| :------------------ | :---------------------------- | :--------------- |
+| **MCU**             | NodeMCU ESP8266 (v3)          | -                |
+| **Stepper Motor**   | 28BYJ-48 s ULN2003 driverom   | D6, D7, D5, D0   |
+| **Relay Module**    | 5V / 12V 1-kanalni (ili više) | D2               |
+| **Temp/Hum Senzor** | DHT22 (AM2302)                | D1               |
+| **GPS Modul**       | NEO-6M / NEO-7M               | D4 (RX), D3 (TX) |
+| **Napajanje**       | 5V DC (min 1.5A)              | VIN / 5V         |
 
 ---
 
-### 3️⃣ Konfiguracija
+## 📁 Struktura Projekta (Software Architecture)
 
-- U datoteci `config.h` (ili na vrhu glavnog koda) prilagodite mrežne postavke:
-- `const char* ssid = "VAS_WIFI_NAZIV";`
-- `const char* password = "VASA_LOZINKA";`
+- **`src/`**: C++ izvorni kod (Arduino/ESP8266 platforma)
+  - `antenna/`: Upravljanje stepper motorom i relejima.
+  - `sensors/`: Integracija GPS-a i DHT22 senzora.
+  - `web/`: REST API poslužitelj i rukovanje zahtjevima.
+  - `logger/`: Upravljanje QSO bazom podataka i ANSI serijskom konzolom.
+  - `filesystem/`: Rad s LittleFS (JSON spremanje).
+- **`data/`**: Web UI resursi (prenose se na ESP8266 putem LittleFS)
+  - `index.html`: Glavna kontrolna ploča (Dashboard).
+  - `logger.html`: Sučelje radio dnevnika.
+  - `data_graf.html`: Interaktivni grafikoni senzora.
+  - `edi_export.html`: Napredni obrazac za kontest izvoz.
+  - `common.js`: Zajedničke mrežne i pomoćne funkcije.
 
-## 📡 Upotreba (Operation)
+---
 
-### Pokretanje
-- Spojite sustav na napajanje.
+## 💻 Instalacija i Konfiguracija
 
-### Pristup web sučelju
-- U pregledniku otvorite IP adresu uređaja (npr. http://192.168.1.100).
+### 1. Arduino IDE Postvke
 
-### Upravljanje antenama
-- Klikom na naziv antene (npr. Dipole 80 m, Yagi 20 m) sustav:
-- aktivira odabrani relej
-- automatski isključuje prethodnu antenu (ako je interlock uključen)
+1. Instalirajte **ESP8266 Core** (v3.0.0+).
+2. Instalirajte potrebne biblioteke:
+   - `ArduinoJson` (v7.x)
+   - `AccelStepper`
+   - `DHT sensor library`
+   - `TinyGPS++`
+   - `NTPClient`
 
-## ⚠️ Sigurnosne napomene (RF Safety)
+### 2. Konfiguracija WiFi mreže
 
-### 📡 RF povratna sprega
--Koristite blok kondenzatore (100 nF) i feritne jezgre na signalnim i naponskim vodovima, posebno pri većim izlaznim snagama.
+Otvorite `src/config/config.h` i postavite svoje podatke:
 
-### ⚡ Radni napon releja
--Ako upravljate koaksijalnim relejima na 12V ili 24V, provjerite kompatibilnost i izolaciju.
+```cpp
+constexpr char WIFI_SSID[]     = "VAS_WIFI_NAZIV";
+constexpr char WIFI_PASSWORD[] = "VASA_LOZINKA";
+```
 
-## 🖼 Slike
--Naziv	Opis	Putanja
--Web Interface	Responzivno web sučelje za upravljanje antenama	docs/images/web_interface.png
--Antenna Setup	Prikaz spajanja releja i antena	docs/images/antenna_setup.png
--System Block Diagram	Blok shema ESP8266 SmartAntenna Control sustava	docs/images/block_diagram.png
+### 3. Prijenos Web Datoteka
 
-## 🤝 Doprinosi i kontakt
--Slobodno otvorite Issue ili Pull Request ako želite doprinijeti projektu.
+Koristite **ESP8266 LittleFS Data Upload** alat kako biste prenijeli sadržaj `data/` foldera na memoriju mikrokontrolera.
 
-### 👤 Autor
--ESP8266 SmartAntenna Control
--Radioamaterski projekt
+---
 
-# 73 de 9A5AGN
+## 📡 Upotreba (Usage Guide)
 
+1. **Dashboard:** Pratite temperaturu, vlagu i napon. Odaberite antenu i kut pod kojim želite zračiti (0-360°).
+2. **Logging:** Tijekom rada, unesite pozivnu oznaku sugovornika. Sustav će automatski odrediti državu i trenutno vrijeme. Možete spremiti bilješke i RST izvještaje.
+3. **Contest Export:** Na kraju natjecanja, kliknite na "Export to EDI", ispunite podatke o svojoj opremi i preuzmite datoteku spremnu za slanje robotu.
+4. **Diagnostics:** Spojite se na Serijski monitor (115200 baud) za pregled detaljne dijagnostike u boji.
+
+---
+
+## 🔮 Planirane Nadogradnje (Roadmap)
+
+- [ ] **WiFiManager:** Implementacija sučelja za konfiguraciju WiFi-a bez mjenjanja koda.
+- [ ] **Multi-Relay Support:** Podrška za izbor između 4 ili 8 antena putem proširene konfiguracije.
+- [ ] **MQTT Integracija:** Mogućnost slanja podataka na kućnu automatizaciju (npr. Home Assistant).
+- [ ] **PWA Offline Mode:** Poboljšana podrška za rad bez pristupa ESP-u (keširanje logova lokalno u pregledniku).
+- [ ] **Vatmetar / SWR Metar:** Dodavanje modula za mjerenje izlazne snage i SWR-a u realnom vremenu.
+
+---
+
+## 🤝 Doprinosi i Licenca
+
+Projekt je otvoren za sve radioamatere. Ako želite doprinijeti, otvorite _Pull Request_ ili prijavite bug putem _Issues_.
+
+**73 de 9A5AGN**

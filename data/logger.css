@@ -1,19 +1,24 @@
-/* logger.css - Stilovi specifični za logger.html, nadograđuju common.css */
+/* --------------------------------------------------------------------------- */
+/* logger.css - Stilovi specifični za stranicu dnevnika veza (logger.html)     */
+/* --------------------------------------------------------------------------- */
+/* Definira kompleksan layout za bočni prikaz forme i tablice veza,           */
+/* stilizaciju tablice prilagođenu mobilnim uređajima i interaktivne elemente */
+/* za filtriranje i izvoz podataka (CSV, ADIF, EDI).                         */
+/* --------------------------------------------------------------------------- */
 
-/* Važno: logger.html sada treba linkati common.css PRIJE logger.css */
 
-/* --- General Section Styles (overrides/additions for cards on logger page) --- */
-/* Koristimo postojeće .card stilove iz common.css */
+
+
+
 section.card {
-    margin-bottom: 30px; /* Dodaj razmak između kartica na logger stranici */
-    padding: 25px; /* Osiguraj konzistentan padding unutar kartica, ako common.css to ne radi */
-    box-shadow: var(--shadow-medium); /* Dodaj sjenu da kartice iskaču */
-    border-radius: var(--border-radius); /* Koristi definirani border-radius */
-    background-color: var(--card-background); /* Osiguraj pozadinu kartice */
+    margin-bottom: 30px; 
+    padding: 25px; 
+    box-shadow: var(--shadow-medium); 
+    border-radius: var(--border-radius); 
+    background-color: var(--card-background); 
 }
 
-/* --- GLAVNI LAYOUT ZA LOGGER STRANICU --- */
-/* Ovo je ključ za bočni raspored */
+
 .logger-content-wrapper {
     display: flex;
     flex-wrap: wrap; /* Omogućuje prebacivanje u stupac na manjim ekranima */
@@ -26,20 +31,18 @@ section.card {
 }
 
 .logger-form-section {
-    flex: 0 0 350px; /* Fiksna širina za formu na većim ekranima, ne smije se skupljati */
-    max-width: 100%; /* Osiguraj da ne prelijeva na jako malim ekranima */
-    /* Dodatno: Za vrlo male ekrane, možemo dozvoliti formi da se smanji ako je 350px previše */
-    width: 100%; /* Default 100% širina za flex-basis da bi max-width bio efektivan */
+    flex: 0 0 350px; 
+    max-width: 100%; 
+    width: 100%; 
 }
 
 .logger-table-section {
-    flex: 1; /* Uzmi sav preostali prostor */
-    min-width: 0; /* Važno za flex iteme da se ispravno skupljaju */
-    /* Osiguraj da je i ova sekcija responsivna */
-    width: 100%; /* Default 100% širina */
+    flex: 1; 
+    min-width: 0; 
+    width: 100%; 
 }
 
-/* --- Form Styles --- */
+
 #logForm .form-group {
     margin-bottom: 18px;
 }
@@ -58,14 +61,14 @@ section.card {
 #logForm label .fas {
     color: var(--primary-color);
     font-size: 0.85em;
-    flex-shrink: 0; /* Sprječava skupljanje ikone */
+    flex-shrink: 0; 
 }
 
 #logForm input[type="text"],
 #logForm input[type="number"],
 #logForm select,
 #logForm textarea {
-    width: 100%; /* Promijeni na 100% da radi s box-sizing i paddingom */
+    width: 100%; 
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-small);
@@ -73,7 +76,7 @@ section.card {
     color: var(--text-color-dark);
     font-size: 1em;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box; /* Vrlo važno: Padding i border uključeni u ukupnu širinu */
+    box-sizing: border-box; 
 }
 
 #logForm input:focus,
@@ -100,11 +103,8 @@ section.card {
     padding-right: 35px;
 }
 
-/* Validacija forme */
-/* Prilagođeno: !important se obično izbjegava, ali ovdje može biti potrebno
-   zbog redoslijeda CSS-a i Bootstrap override-a, ili jednostavno provjeri
-   da common.css nema jača pravila za border-color na inputima */
-#logForm input:valid:not(:placeholder-shown), /* Dodaj :not(:placeholder-shown) za bolji UX */
+
+#logForm input:valid:not(:placeholder-shown), 
 #logForm select:valid:not([value=""]):not(:placeholder-shown),
 #logForm textarea:valid:not(:placeholder-shown) {
     border-color: var(--success-color);
@@ -114,7 +114,7 @@ section.card {
 #logForm select:invalid:not([value=""]):not(:placeholder-shown),
 #logForm textarea:invalid:not(:placeholder-shown) {
     border-color: var(--error-color);
-    box-shadow: 0 0 0 3px rgba(var(--error-color-rgb), 0.2); /* Koristi RGB varijablu ako postoji */
+    box-shadow: 0 0 0 3px rgba(var(--error-color-rgb), 0.2); 
 }
 
 .help-text {
@@ -129,19 +129,19 @@ section.card {
 .help-text .fas {
     font-size: 0.9em;
     color: var(--info-color);
-    flex-shrink: 0; /* Sprječava skupljanje ikone */
+    flex-shrink: 0; 
 }
 
 .form-row {
     display: flex;
     gap: 20px;
     margin-bottom: 18px;
-    flex-wrap: wrap; /* Omogući prelamanje za manje ekrane ako se ne prebaci na column ranije */
+    flex-wrap: wrap; 
 }
 
 .form-row .half-width {
-    flex: 1 1 calc(50% - 10px); /* Omogući da se rastegne, ali da uzme ~polovicu širine minus gap */
-    min-width: 150px; /* Minimalna širina za svaki element u redu */
+    flex: 1 1 calc(50% - 10px); 
+    min-width: 150px; 
 }
 
 .form-actions {
@@ -149,15 +149,15 @@ section.card {
     justify-content: flex-end;
     gap: 15px;
     margin-top: 25px;
-    flex-wrap: wrap; /* Omogućuje prelamanje gumba */
+    flex-wrap: wrap; 
 }
 
 .form-actions button {
-    flex-grow: 1; /* Omogući gumbima da se šire */
-    min-width: 120px; /* Minimalna širina da se ne stisnu previše */
+    flex-grow: 1; 
+    min-width: 120px; 
 }
 
-/* --- Message Area Styles --- */
+
 .message-area {
     padding: 12px 20px;
     border-radius: var(--border-radius);
@@ -169,7 +169,7 @@ section.card {
     display: flex;
     align-items: center;
     gap: 10px;
-    word-break: break-word; /* Omogući prelamanje dugih riječi */
+    word-break: break-word; 
 }
 
 .message-area.show {
@@ -201,7 +201,7 @@ section.card {
     border: 1px solid var(--warning-color);
 }
 
-/* --- Log History Table Styles --- */
+
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -219,7 +219,7 @@ section.card {
     box-shadow: var(--shadow-light);
     border-radius: var(--border-radius);
     overflow: hidden;
-    width: 100%; /* Osiguraj da na malim ekranima zauzima punu širinu */
+    width: 100%; 
 }
 
 .search-filter input[type="text"] {
@@ -229,7 +229,6 @@ section.card {
     background-color: var(--card-background);
     color: var(--text-color-dark);
     font-size: 0.95em;
-    /* Dodaj box-sizing da padding ne poveća širinu inputa */
     box-sizing: border-box;
 }
 
@@ -256,18 +255,17 @@ section.card {
 }
 
 #logLoadingIndicator {
-    /* Stilovi za loading indikator - slobodno prilagodi */
     padding: 15px;
     border-radius: var(--border-radius);
     background-color: var(--background-light);
     border: 1px solid var(--border-color);
     margin-bottom: 20px;
-    text-align: center; /* Centriraj tekst */
+    text-align: center; 
 }
 
 .table-responsive {
     width: 100%;
-    overflow-x: auto; /* I dalje omogućujemo horizontalno skrolanje ako je preširoko */
+    overflow-x: auto; 
     margin-bottom: 20px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
@@ -278,14 +276,14 @@ section.card {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9em;
-    min-width: 800px; /* Možeš podesiti ovo, ovisi koliko bi trebala biti široka prije scrolla */
+    min-width: 800px; 
 }
 
 #logTable th,
 #logTable td {
     padding: 12px 15px;
     border: 1px solid var(--border-color);
-    text-align: left; /* Bolje poravnanje za tekstualne podatke */
+    text-align: left; 
     vertical-align: middle;
 }
 
@@ -317,8 +315,7 @@ section.card {
     color: var(--text-color-dark);
 }
 
-/* Specific column widths for better readability (adjust as needed) */
-/* Ovi stilovi postaju nevažni na malim ekranima kad se display: block primijeni */
+
 #logTable th:nth-child(1), #logTable td:nth-child(1) { width: 12%; } /* Vrijeme */
 #logTable th:nth-child(2), #logTable td:nth-child(2) { width: 10%; } /* Pozivna */
 #logTable th:nth-child(3), #logTable td:nth-child(3) { width: 10%; } /* Ime */
@@ -338,7 +335,7 @@ section.card {
     border-radius: var(--border-radius-small);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin: 0;
-    white-space: nowrap; /* Spriječi prelamanje teksta gumba */
+    white-space: nowrap; 
 }
 #logTable td .button.danger:hover {
     background-color: #c0392b;
@@ -365,13 +362,13 @@ section.card {
     justify-content: flex-end;
     gap: 15px;
     margin-top: 25px;
-    flex-wrap: wrap; /* Omogući prelamanje gumba */
+    flex-wrap: wrap; 
 }
 
 .table-footer .button {
     margin: 0;
-    flex-grow: 1; /* Omogući gumbima da se šire */
-    min-width: 120px; /* Minimalna širina gumba */
+    flex-grow: 1; 
+    min-width: 120px; 
 }
 .table-footer .button.secondary {
     background-color: var(--secondary-color);
@@ -394,8 +391,16 @@ section.card {
     background-color: #9c1f87;
 }
 
+.table-footer .button.edi {
+    background-color: var(--warning-color);
+    color: white;
+}
+.table-footer .button.edi:hover {
+    background-color: #d68910;
+}
 
-/* --- Responsive Adjustments for Logger Page --- */
+
+
 @media (max-width: 992px) {
     /* Sekcije se prebacuju u stupac na 992px */
     .logger-content-wrapper {
@@ -414,7 +419,7 @@ section.card {
     .section-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px; /* Smanji razmak */
+        gap: 10px; 
     }
     .search-filter {
         width: 100%;
@@ -429,7 +434,7 @@ section.card {
     .table-footer button {
         width: 100%;
         margin: 5px 0;
-        min-width: unset; /* Poništi min-width kad su u stupcu */
+        min-width: unset; 
     }
 }
 
@@ -437,18 +442,18 @@ section.card {
     /* Form-row se prebacuje u stupac na 768px */
     .form-row {
         flex-direction: column;
-        gap: 15px; /* Dodaj malo razmaka između elemenata u columnu */
+        gap: 15px; 
     }
     .form-row .half-width {
-        flex: 1 1 100%; /* Zauzmi punu širinu */
-        min-width: unset; /* Poništi minimalnu širinu */
+        flex: 1 1 100%; 
+        min-width: unset; 
     }
 
     #logTable {
-        min-width: 1px; /* Omogući da se smanji i da overflow-x preuzme */
+        min-width: 1px; 
     }
 
-    /* Table Responsiveness (Card-like rows for mobile) - aktivira se na 768px */
+
     #logTable, #logTable tbody, #logTable tr, #logTable td {
         display: block;
         width: 100%;
@@ -488,24 +493,24 @@ section.card {
         font-weight: 600;
         color: var(--text-color-dark);
         text-align: left;
-        overflow: hidden; /* U slučaju dužeg labela */
-        text-overflow: ellipsis; /* Dodaj tri točkice ako je predugačko */
+        overflow: hidden; 
+        text-overflow: ellipsis; 
     }
 
     #logTable td:nth-last-child(1)::before {
-        content: ''; /* Ukloni data-label za zadnji stupac (akcije) */
+        content: ''; 
     }
     #logTable td:nth-last-child(1) {
-        text-align: center; /* Centriraj akcije */
-        display: flex; /* Koristi flex za gumbe akcija */
+        text-align: center; 
+        display: flex; 
         justify-content: center;
         align-items: center;
-        gap: 10px; /* Razmak između gumba Delete/Edit */
-        padding-left: 15px; /* Vrati normalan padding za akcije */
+        gap: 10px; 
+        padding-left: 15px; 
     }
 
     .button {
-        flex: 10%; /* Buttons take full width */
+        flex: 10%; 
         margin: 5px 0;
     }
 }
@@ -535,9 +540,91 @@ section.card {
     #logTable td::before {
         left: 10px;
         width: calc(45% - 20px);
-        font-size: 0.85em; /* Malo manji font za data-label */
+        font-size: 0.85em; 
     }
-    #logTable td:nth-last-child(1) { /* Ponovno ciljaj zadnji td za akcije */
-        padding-left: 10px; /* Manji padding za akcije na najmanjim ekranima */
+    #logTable td:nth-last-child(1) { 
+        padding-left: 10px; 
     }
 }
+
+/* --------------------------------------------------------------------------- */
+/* CONTEST MODE STYLES                                                         */
+/* --------------------------------------------------------------------------- */
+
+.mode-switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 10px;
+    background: rgba(41, 128, 185, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(41, 128, 185, 0.1);
+}
+
+.mode-switch-container span {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: #2c3e50;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #3498db;
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.input-with-nr {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+#sentNr, #rcvdNr {
+    width: 70px !important;
+    text-align: center;
+    font-weight: bold;
+    color: #3498db;
+    background-color: rgba(52, 152, 219, 0.1) !important;
+    border: 2px solid #3498db !important;
+}

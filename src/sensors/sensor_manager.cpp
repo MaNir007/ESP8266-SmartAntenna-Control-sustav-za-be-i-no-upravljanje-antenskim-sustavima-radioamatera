@@ -1,17 +1,19 @@
-/**
- * @file sensor_manager.cpp
- * @brief Upravljanje senzorima u sustavu (DHT22, GPS, napon).
- * @details Modul pruža apstrakciju za dohvat podataka s različitih senzora.
- * Pokreće GPS komunikaciju i čitanje okolišnih uvjeta (temperatura i vlaga).
- */
+// ---------------------------------------------------------------------------
+// sensor_manager.cpp - Upravljanje senzorima (DHT22, GPS, napon)
+// ---------------------------------------------------------------------------
+// Modul pruža apstrakciju za dohvat podataka s različitih senzora.
+// Pokreće GPS komunikaciju i čitanje okolišnih uvjeta poput temperature.
+// ---------------------------------------------------------------------------
 #include "sensor_manager.h"
 #include "../config/config.h" 
 #include <DHT.h>
 #include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 
-// --- EXTERN DEKLARACIJE ---
-// Povezujemo se s objektima koji su definirani u main.cpp
+// ---------------------------------------------------------------------------
+// EXTERN DEKLARACIJE
+// ---------------------------------------------------------------------------
+
 extern DHT dht;
 extern SoftwareSerial gpsSerial;
 extern TinyGPSPlus gps;
@@ -19,9 +21,11 @@ extern float currentLat;
 extern float currentLon;
 extern bool gpsValid;
 
-/**
- * @brief Inicijalizira sve senzore sustava.
- */
+static unsigned long lastGpsPrint = 0; 
+
+// ---------------------------------------------------------------------------
+// Inicijalizira sve senzore sustava
+// ---------------------------------------------------------------------------
 void initSensors() {
     dht.begin();
     Serial.println("DHT22 senzor inicijaliziran.");
@@ -29,9 +33,9 @@ void initSensors() {
     initGps(); 
 }
 
-/**
- * @brief Očitava temperaturu s DHT senzora.
- */
+// ---------------------------------------------------------------------------
+// Očitava temperaturu s DHT senzora
+// ---------------------------------------------------------------------------
 float getTemperature() {
     float temperature = dht.readTemperature();
     if (isnan(temperature)) {
@@ -41,9 +45,9 @@ float getTemperature() {
     return temperature;
 }
 
-/**
- * @brief Očitava vlažnost s DHT senzora.
- */
+// ---------------------------------------------------------------------------
+// Očitava vlažnost s DHT senzora
+// ---------------------------------------------------------------------------
 float getHumidity() {
     float humidity = dht.readHumidity();
     if (isnan(humidity)) {
@@ -53,24 +57,22 @@ float getHumidity() {
     return humidity;
 }
 
-/**
- * @brief Izračunava napon sustava.
- * Ako imaš naponski djelitelj na A0 (npr. 10k i 2.2k), ovdje ide formula.
- */
+// ---------------------------------------------------------------------------
+// Izračunava napon sustava (ADC A0)
+// ---------------------------------------------------------------------------
 float getVoltage() {
-    // ADC na ESP8266 ide do 1.0V (interni) ili 3.3V (na NodeMCU pločama)
-    // Primjer za 3.3V sustav bez vanjskog djelitelja:
     int raw = analogRead(A0);
     return (raw / 1023.0) * 3.3; 
 }
 
-// --- GPS FUNKCIJE ---
+// ---------------------------------------------------------------------------
+// GPS FUNKCIJE
+// ---------------------------------------------------------------------------
 
-/**
- * @brief Inicijalizira serijsku komunikaciju za GPS modul na zadanom baud rateu.
- */
+// ---------------------------------------------------------------------------
+// Inicijalizira serijsku komunikaciju za GPS modul
+// ---------------------------------------------------------------------------
 void initGps() {
-    // GPS_BAUD_RATE bi trebao biti u config.h (najčešće 9600 za Neo-6M)
     #ifndef GPS_BAUD_RATE
         #define GPS_BAUD_RATE 9600
     #endif
@@ -79,25 +81,21 @@ void initGps() {
     Serial.println("GPS SoftwareSerial pokrenut na 9600 baud.");
 }
 
-/**
- * @brief Čita dostupne podatke iz GPS-a i ažurira globalne koordinate.
- * Poziva se periodički unutar glavne petlje (loop).
- */
+// ---------------------------------------------------------------------------
+// Čita dostupne podatke iz GPS-a i ažurira koordinate
+// ---------------------------------------------------------------------------
 void updateGpsData() {
-    // Čitanje podataka s GPS serijskog porta
     while (gpsSerial.available()) {
         gps.encode(gpsSerial.read());
     }
 
-    // Provjera je li lokacija ažurirana
+
     if (gps.location.isUpdated()) {
         if (gps.location.isValid()) {
             currentLat = gps.location.lat();
             currentLon = gps.location.lng();
             gpsValid = true;
             
-            // Ispis svakih par sekundi da ne zatrpavamo Serial monitor
-            static unsigned long lastGpsPrint = 0;
             if (millis() - lastGpsPrint > 5000) {
                 Serial.printf("GPS FIX: Lat: %.6f, Lon: %.6f\n", currentLat, currentLon);
                 lastGpsPrint = millis();
@@ -107,23 +105,22 @@ void updateGpsData() {
         }
     }
 
-    // Sigurnosni timeout: ako nema znakova duže vrijeme, GPS je vjerojatno odspojen
     if (millis() > 5000 && gps.charsProcessed() < 10) {
         gpsValid = false;
     }
 }
 
-/**
- * @brief Vraća je li GPS lokacija trenutno valjana.
- */
+// ---------------------------------------------------------------------------
+// Vraća je li GPS lokacija trenutno valjana
+// ---------------------------------------------------------------------------
 bool isGpsValid() { return gpsValid; }
 
-/**
- * @brief Dohvaća zadnju poznatu geografsku širinu.
- */
+// ---------------------------------------------------------------------------
+// Dohvaća zadnju poznatu geografsku širinu (Latitude)
+// ---------------------------------------------------------------------------
 float getGpsLatitude() { return currentLat; }
 
-/**
- * @brief Dohvaća zadnju poznatu geografsku dužinu.
- */
+// ---------------------------------------------------------------------------
+// Dohvaća zadnju poznatu geografsku dužinu (Longitude)
+// ---------------------------------------------------------------------------
 float getGpsLongitude() { return currentLon; }

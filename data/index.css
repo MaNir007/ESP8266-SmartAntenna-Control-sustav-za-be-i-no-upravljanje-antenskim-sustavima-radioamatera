@@ -1,31 +1,30 @@
-/* index.css - Stilovi specifični za index.html, nadograđuju common.css */
-
-/* Važno: index.html treba linkati common.css PRIJE index.css */
-
-/* --- Glavni sadržaj - Grid raspored --- */
-/* Redefiniramo 'main' da koristi grid i postavlja elemente */
+/* --------------------------------------------------------------------------- */
+/* index.css - Stilovi specifični za početnu stranicu (index.html)             */
+/* --------------------------------------------------------------------------- */
+/* Sadrži Grid layout za glavne kartice, stilizaciju interaktivnog kompasa,    */
+/* klizača za rotaciju, indikatora odabrane antene i senzorskih podataka.     */
+/* --------------------------------------------------------------------------- */
 main {
     display: grid;
-    /* Definiramo tri stupca: lijevi fiksne širine, srednji i desni fleksibilni */
     grid-template-columns: 280px 1fr 1fr;
-    grid-template-rows: auto auto; /* Dva retka: za gornji sadržaj i logger link */
-    gap: 25px; /* Razmak između grid elemenata */
-    align-items: stretch; /* Promijenjeno iz 'start' u 'stretch' da kartice budu iste visine */
+    grid-template-rows: auto auto; 
+    gap: 25px; 
+    align-items: stretch; 
 }
 
-/* Postavljanje pojedinih kartica u grid */
+
 .antenna-selector-card {
-    grid-column: 1 / 2; /* Prva kartica ide u prvi stupac */
-    grid-row: 1 / 2; /* U prvi red */
-    min-width: 280px; /* Osiguraj minimalnu širinu za karticu odabira antene */
-    display: flex; /* Koristi flexbox unutar kartice za gumbe */
+    grid-column: 1 / 2; 
+    grid-row: 1 / 2; 
+    min-width: 280px; 
+    display: flex; 
     flex-direction: column;
-    justify-content: space-between; /* Razmak između gumba i statusa */
+    justify-content: space-between; 
 }
 
 .compass-card {
-    grid-column: 2 / 3; /* Druga kartica (kompas) ide u drugi stupac */
-    grid-row: 1 / 2; /* U prvi red */
+    grid-column: 2 / 3; 
+    grid-row: 1 / 2; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,8 +33,8 @@ main {
 }
 
 .sensor-data-card {
-    grid-column: 3 / 4; /* Treća kartica (senzori) ide u treći stupac */
-    grid-row: 1 / 2; /* U prvi red */
+    grid-column: 3 / 4; 
+    grid-row: 1 / 2; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,8 +43,8 @@ main {
 }
 
 .logger-link-card {
-    grid-column: 1 / 2; /* Link na logger ide ispod odabira antene, u prvi stupac */
-    grid-row: 2 / 3; /* U drugi red */
+    grid-column: 1 / 2; 
+    grid-row: 2 / 3; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -54,26 +53,26 @@ main {
 }
 
 
-/* --- Antenna Selector Section --- */
+
 .antenna-selector {
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
     justify-content: center;
-    flex-wrap: wrap; /* Omogući prelamanje gumba na manjim ekranima */
+    flex-wrap: wrap; 
 }
 
 .antenna-selector .btn-antenna {
-    flex: 1 1 auto; /* Omogući da se gumbi rastežu */
-    min-width: 140px; /* Minimalna širina za svaki gumb */
-    background-color: var(--background-light); /* Svjetla pozadina za neaktivne gumbe */
+    flex: 1 1 auto; 
+    min-width: 140px; 
+    background-color: var(--background-light); 
     color: var(--text-color-dark);
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .antenna-selector .btn-antenna:hover {
-    background-color: #e9ecef; /* Malo tamnija pozadina na hover */
+    background-color: #e9ecef; 
     border-color: var(--primary-color);
 }
 
@@ -82,11 +81,11 @@ main {
     color: white;
     box-shadow: 0 4px 8px rgba(var(--primary-color-rgb), 0.3);
     border-color: var(--primary-color);
-    transform: translateY(-2px); /* Mali pomak za aktivni gumb */
+    transform: translateY(-2px); 
 }
 
 .antenna-selector .btn-antenna.active:hover {
-    background-color: #2980b9; /* Tamnija primarna na hover */
+    background-color: #2980b9; 
 }
 
 .status-indicator {
@@ -96,81 +95,80 @@ main {
     font-size: 1.1em;
     color: var(--text-color-dark);
     margin-top: 15px;
-    justify-content: center; /* Centriraj status */
+    justify-content: center; 
 }
 
-/* Osnovno stanje LED-ice (siva) */
+
 .status-indicator .led {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background-color: #bbb; /* Siva dok ne dobije status */
+    background-color: #bbb; 
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
 }
 
-/* Stanje za GP Antenu - CRVENA */
+
 .status-indicator .led.gp-active {
-    background-color: #e74c3c; /* Crvena (var(--tertiary-color)) */
+    background-color: #e74c3c; 
     box-shadow: 0 0 12px #e74c3c, inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Stanje za Yagi Antenu - ZELENA */
+
 .status-indicator .led.yagi-active {
-    background-color: #2ecc71; /* Zelena (var(--secondary-color)) */
+    background-color: #2ecc71; 
     box-shadow: 0 0 12px #2ecc71, inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-/* --- Compass and Rotation Control Section (IDENTICAL TO style.css) --- */
+
 /* Maknuli smo max-width: 300px iz .compass-container kako bi se moglo rastegnuti u flexboxu */
 .compass-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%; /* Sada neka zauzima cijelu širinu svog grid stupca */
-    margin: 0; /* Uklanjamo auto marginu jer grid to rješava */
+    width: 100%; 
+    margin: 0; 
 }
 
 .compass {
     position: relative;
-    width: 250px; /* Veći kompas */
+    width: 250px; 
     height: 250px;
     border-radius: 50%;
     background: radial-gradient(circle at 50% 50%, #ffffff, #f0f0f0);
-    border: 6px solid var(--text-color-dark); /* Deblji obrub */
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.25); /* Jače sjene */
+    border: 6px solid var(--text-color-dark); 
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.25); 
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 25px;
-    overflow: hidden; /* Osiguraj da strelica ostaje unutar kruga */
+    overflow: hidden; 
 }
 
-/* Kompas ruža vjetrova - koristi pozadinsku sliku za bolji izgled */
 .compass-rose {
     position: absolute;
-    width: 90%; /* Manja od kruga da se vidi obrub */
+    width: 90%; 
     height: 90%;
     border-radius: 50%;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="225" height="225" viewBox="0 0 225 225"><circle cx="112.5" cy="112.5" r="100" fill="none" stroke="%23ccc" stroke-width="1.5"/><line x1="112.5" y1="12.5" x2="112.5" y2="27.5" stroke="%23555" stroke-width="2"/><text x="112.5" y="47.5" text-anchor="middle" font-size="18" fill="%23e74c3c" font-weight="bold">N</text><line x1="112.5" y1="212.5" x2="112.5" y2="197.5" stroke="%23555" stroke-width="2"/><text x="112.5" y="190" text-anchor="middle" font-size="18" fill="%23555">S</text><line x1="12.5" y1="112.5" x2="27.5" y2="112.5" stroke="%23555" stroke-width="2"/><text x="40" y="117.5" text-anchor="middle" font-size="18" fill="%23555">W</text><line x1="212.5" y1="112.5" x2="197.5" y2="112.5" stroke="%23555" stroke-width="2"/><text x="185" y="117.5" text-anchor="middle" font-size="18" fill="%23555">E</text><circle cx="112.5" cy="112.5" r="5" fill="%237f8c8d"/><line x1="112.5" y1="112.5" x2="112.5" y2="25" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="200" y2="112.5" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="25" y2="112.5" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/><line x1="112.5" y1="112.5" x2="112.5" y2="200" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" stroke-dasharray="3,3"/></svg>');
     background-repeat: no-repeat;
     background-position: center center;
     background-size: contain;
-    z-index: 1; /* Ispod strelice i prikaza kuta */
+    z-index: 1; 
 }
 
 .compass-arrow {
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 15px solid transparent; /* Šira strelica */
+    border-left: 15px solid transparent; 
     border-right: 15px solid transparent;
-    border-bottom: 110px solid var(--tertiary-color); /* Crvena strelica */
-    top: 10px; /* Podesi poziciju da stane unutar kruga */
+    border-bottom: 110px solid var(--tertiary-color); 
+    top: 10px; 
     transform-origin: bottom center;
     transition: transform 0.3s ease-out;
-    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4)); /* Jača sjena */
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4)); 
     z-index: 5;
 }
 
@@ -179,22 +177,22 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2.2em; /* Veći font */
+    font-size: 2.2em; 
     font-weight: 700;
     color: var(--text-color-dark);
     background-color: var(--card-background);
     border-radius: 50%;
-    width: 85px; /* Veći krug */
+    width: 85px; 
     height: 85px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Jača sjena */
-    z-index: 10; /* Osiguraj da je iznad strelice */
-    border: 3px solid var(--primary-color); /* Dodaj obrub */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+    z-index: 10; 
+    border: 3px solid var(--primary-color); 
 }
 
-/* Kontrola rotacije (iz originalnog style.css) */
+
 .control-group {
     width: 100%;
     margin-bottom: 20px;
@@ -209,15 +207,13 @@ main {
 }
 
 .slider {
-    /* Za WebKit (Chrome, Safari) */
     -webkit-appearance: none;
-    /* Standardna CSS svojstva */
     appearance: none;
     width: 100%;
-    height: 12px; /* Malo deblji slider */
+    height: 12px; 
     background: #dcdcdc;
     outline: none;
-    border-radius: 6px; /* Zaobljeni rubovi slidera */
+    border-radius: 6px; 
     opacity: 0.9;
     transition: opacity .2s ease-in-out;
 }
@@ -229,14 +225,14 @@ main {
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px; /* Malo veći thumb */
+    width: 28px; 
     height: 28px;
     border-radius: 50%;
     background: var(--primary-color);
     cursor: grab;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); /* Jača sjena thumba */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2); 
     transition: background-color 0.2s ease, transform 0.2s ease;
-    border: 3px solid var(--card-background); /* Bijeli obrub thumba */
+    border: 3px solid var(--card-background); 
 }
 
 .slider::-webkit-slider-thumb:active {
@@ -271,41 +267,40 @@ main {
 }
 
 .angle-input input[type="number"] {
-    width: 90px; /* Malo širi input */
+    width: 90px; 
     padding: 10px;
     border: 1px solid var(--border-color);
-    border-radius: 8px; /* Više zaobljeni */
+    border-radius: 8px; 
     text-align: center;
-    font-size: 1.2em; /* Veći font */
+    font-size: 1.2em; 
     color: var(--text-color-dark);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .angle-input input[type="number"]:focus {
     border-color: var(--input-focus-border);
-    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3); /* Jača sjena fokusa */
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.3); 
     outline: none;
 }
 
 .angle-input span {
-    font-size: 1.3em; /* Veći font */
+    font-size: 1.3em; 
     font-weight: 500;
     color: var(--text-color-dark);
 }
 
 #rotateBtn {
-    margin: 0; /* Ukloni marginu ako je iz common.css primijenjena */
+    margin: 0; 
 }
 
 
-/* --- Sensor Data Section --- */
+
 .sensor-data {
     text-align: center;
 }
 
 .sensor-grid {
     display: grid;
-    /* Prilagođavamo na dva stupca za veće ekrane, a na 1 za manje */
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
@@ -361,7 +356,7 @@ main {
     display: flex;
 }
 
-/* --- Logger Link Section --- */
+
 .card p {
     margin-bottom: 20px;
     color: var(--text-color-light);
@@ -374,40 +369,40 @@ main {
     display: flex;
 }
 
-/* --- Responsive Adjustments for Index Page --- */
+
 @media (max-width: 1024px) { /* Povećan breakpoint */
     main {
-        grid-template-columns: 1fr; /* Na manjim ekranima, sve u jedan stupac */
-        grid-template-rows: auto; /* Dinamički redovi */
+        grid-template-columns: 1fr; 
+        grid-template-rows: auto; 
     }
 
-    /* Poništi specifično pozicioniranje i dozvoli normalan flow */
+
     .antenna-selector-card,
     .compass-card,
     .sensor-data-card,
     .logger-link-card {
         grid-column: auto;
         grid-row: auto;
-        min-width: unset; /* Poništi minimalnu širinu */
+        min-width: unset; 
         width: 100%;
     }
 
     .antenna-selector-card {
-        order: 1; /* Antena prva */
+        order: 1; 
     }
     .compass-card {
-        order: 2; /* Kompas drugi */
+        order: 2; 
     }
     .sensor-data-card {
-        order: 3; /* Senzori treći */
+        order: 3; 
     }
     .logger-link-card {
-        order: 4; /* Logger zadnji */
+        order: 4; 
     }
 
-    /* Compass styles from style.css for 768px (these media queries are nested for clarity) */
+
     .compass {
-        width: 200px; /* Malo manji kompas */
+        width: 200px; 
         height: 200px;
     }
     .compass-arrow {
@@ -421,9 +416,9 @@ main {
         width: 70px;
         height: 70px;
     }
-    /* Senzorski podaci idu u jedan stupac na 768px */
+
     .sensor-grid {
-        grid-template-columns: 1fr; /* Na manjim ekranima senzori idu jedan ispod drugog */
+        grid-template-columns: 1fr; 
         gap: 15px;
     }
     .sensor-item {
@@ -441,9 +436,9 @@ main {
 }
 
 @media (max-width: 480px) {
-    /* Compass styles from style.css for 480px */
+
     .compass {
-        width: 160px; /* Još manji kompas */
+        width: 160px; 
         height: 160px;
     }
     .compass-arrow {

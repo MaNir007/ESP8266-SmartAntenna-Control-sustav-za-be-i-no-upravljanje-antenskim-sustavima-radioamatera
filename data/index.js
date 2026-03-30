@@ -1,35 +1,34 @@
-// index.js - Skripte specifične za index.html stranicu
+// ---------------------------------------------------------------------------
+// index.js - Skripte specifične za glavnu upravljačku stranicu (index.html)
+// ---------------------------------------------------------------------------
+// Upravlja interakcijom kompasa, sinkronizacijom slidera i input polja kuta,
+// periodičkim osvježavanjem senzora i kontrolom aktivne antene.
+// ---------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-    // Inicijalizacija pri učitavanju
     onLoadIndex();
     
-    // Pretpostavljamo da common.js definira updateConnectionStatus
     if (typeof updateConnectionStatus === 'function') {
         updateConnectionStatus('connected');
     }
 });
 
-/**
- * Inicijalizira UI elemente i postavlja periodično osvježavanje.
- */
+// ---------------------------------------------------------------------------
+// Inicijalizira UI elemente i postavlja periodično osvježavanje
+// ---------------------------------------------------------------------------
 async function onLoadIndex() {
-    // Inicijalno dohvati sve podatke odmah
     await Promise.all([
         getSensorReadings(),
         getAntennaStatus(),
         getServoAngle()
     ]);
 
-    // Intervalno osvježavanje (svakih 5 sekundi)
     setInterval(getSensorReadings, 5000);
     setInterval(getAntennaStatus, 5000);
     setInterval(getServoAngle, 5000);
 
-    // Selektori elemenata
     const angleSlider = document.getElementById('angleSlider');
     const angleInput = document.getElementById('angleInput');
 
-    // Povezivanje Slidera i Input polja
     if (angleSlider && angleInput) {
         angleSlider.addEventListener('input', function() {
             angleInput.value = this.value;
@@ -54,23 +53,20 @@ function updateAntennaUI(antennaType) {
 
     if (!led || !statusText) return;
 
-    // Ažuriraj tekstualni prikaz
     statusText.textContent = antennaType;
 
-    // Resetiraj klase (ukloni boje)
     led.classList.remove('yagi-active', 'gp-active');
 
-    // Dodaj boju ovisno o tipu
     if (antennaType === 'GP') {
-        led.classList.add('gp-active'); // Postaje CRVENA
+        led.classList.add('gp-active'); 
     } else if (antennaType === 'Yagi') {
-        led.classList.add('yagi-active'); // Postaje ZELENA
+        led.classList.add('yagi-active'); 
     }
 }
 
-/**
- * Ažurira prikaz kuta na kompasu.
- */
+// ---------------------------------------------------------------------------
+// Ažurira vizualni prikaz kuta na kompasu i strelici
+// ---------------------------------------------------------------------------
 function updateAngleDisplay(angle) {
     const compassDegree = document.getElementById('compassDegree');
     const compassArrow = document.getElementById('compassArrow');
@@ -81,11 +77,10 @@ function updateAngleDisplay(angle) {
     }
 }
 
-// --- API POZIVI (Ispravljene putanje na /api/...) ---
+
 
 async function setAntenna(antennaType) {
     try {
-        // ISPRAVLJENO: Putanja mora odgovarati web_server.cpp ruti
         await sendHttpRequest('/api/set_antenna', 'POST', { type: antennaType });
         if (typeof showFormMessage === 'function') showFormMessage(`Antena: ${antennaType}`, 'success');
         await getAntennaStatus();
@@ -97,7 +92,6 @@ async function setAngle(angle) {
         const parsedAngle = parseInt(angle);
         if (isNaN(parsedAngle)) return;
         
-        // ISPRAVLJENO: Putanja mora biti /api/set_angle
         await sendHttpRequest('/api/set_angle', 'POST', { angle: parsedAngle });
         await getServoAngle(); 
     } catch (e) { console.error("Greška pri slanju kuta:", e); }
@@ -132,15 +126,19 @@ async function getServoAngle() {
         const angle = parseInt(data.angle);
         if (!isNaN(angle)) {
             updateAngleDisplay(angle);
-            // Sinkroniziraj i slider/input s trenutnim stanjem stepera
             if(document.activeElement.id !== 'angleInput' && document.activeElement.id !== 'angleSlider') {
                 document.getElementById('angleSlider').value = angle;
                 document.getElementById('angleInput').value = angle;
             }
         }
-    } catch (e) { console.error("Kut nedostupan"); }
+    } catch (e) {
+        console.error("Kut nedostupan");
+    }
 }
 
+// ---------------------------------------------------------------------------
+// Kalibracija servo (stepper) motora - postavlja trenutni položaj na 0°
+// ---------------------------------------------------------------------------
 async function calibrateServo() {
     if (confirm("Antena je usmjerena točno na SJEVER (0°)? Potvrdite za resetiranje brojača koraka.")) {
         try {

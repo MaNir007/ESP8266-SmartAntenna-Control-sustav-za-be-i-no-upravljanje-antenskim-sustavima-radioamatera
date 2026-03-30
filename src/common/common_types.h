@@ -1,7 +1,13 @@
+// ---------------------------------------------------------------------------
+// common_types.h - Zajedničke strukture podataka sustava
+// ---------------------------------------------------------------------------
+// Sadrži definicije struktura koje se koriste u više modula, 
+// poput LogEntry za spremanje podataka o radio vezama.
+// ---------------------------------------------------------------------------
 #ifndef COMMON_TYPES_H
 #define COMMON_TYPES_H
 
-#include <Arduino.h> // Potrebno za String klasu
+#include <Arduino.h> 
 
 struct LogEntry {
     String time;
@@ -13,8 +19,10 @@ struct LogEntry {
     String rstSent;
     String rstReceived;
     String qthlocator;
+    String sentNr;
+    String rcvdNr;
     String notes;
-    // ... ostala polja
+
 };
 
 #endif
