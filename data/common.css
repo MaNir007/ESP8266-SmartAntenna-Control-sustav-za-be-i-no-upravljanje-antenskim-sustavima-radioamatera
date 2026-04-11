@@ -10,23 +10,24 @@
 
 
 :root {
-    --primary-color: #3498db; 
-    --primary-color-rgb: 52, 152, 219; 
-    --secondary-color: #27ae60; 
-    --tertiary-color: #e74c3c; 
-    --tertiary-color-rgb: 231, 76, 60; 
-    --warning-color: #f39c12; 
-    --background-light: #f4f7f6; 
-    --background-dark: #0f83a0; 
-    --card-background: #ffffff; 
-    --text-color-dark: #2c3e50; 
-    --text-color-light: #5e6b7c; 
-    --border-color: #e0e0e0; 
-    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08); 
-    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15); 
-    --border-radius: 12px; 
+    --primary-color: #2b78e4; 
+    --primary-color-rgb: 43, 120, 228; 
+    --secondary-color: #00b894; 
+    --tertiary-color: #ff7675; 
+    --tertiary-color-rgb: 255, 118, 117; 
+    --warning-color: #fdcb6e; 
+    --background-light: #e0eafc; 
+    --background-dark: #cfdef3; 
+    --card-background: rgba(255, 255, 255, 0.85); 
+    --text-color-dark: #2d3436; 
+    --text-color-light: #636e72; 
+    --border-color: rgba(255, 255, 255, 0.5); 
+    --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.1); 
+    --shadow-hover: 0 15px 40px rgba(31, 38, 135, 0.2); 
+    --border-radius: 16px; 
     --border-radius-small: 8px; 
     --input-focus-border: var(--primary-color); 
+ 
 
 
     --success-color: #28a745;
@@ -45,12 +46,13 @@
     --secondary-color-rgb: 39, 174, 96; 
 }
 
-
     body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, var(--background-light), var(--background-dark));
+    background: linear-gradient(-45deg, #e0eafc, #cfdef3, #a1c4fd, #c2e9fb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     color: var(--text-color-dark);
     line-height: 1.6;
     display: flex;
@@ -60,6 +62,12 @@
     box-sizing: border-box; 
     -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 
@@ -140,13 +148,28 @@ header h1 .fas {
     background-color: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-light);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 28px;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
+    animation: fadeInUp 0.7s ease-out both;
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(5) { animation-delay: 0.5s; }
+.card:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .card:hover {
@@ -250,14 +273,37 @@ header h1 .fas {
     margin: 10px 5px;
     cursor: pointer;
     border-radius: var(--border-radius);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: -1;
+}
+
+.button:hover::before {
+    transform: scaleX(1);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .button:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .button .icon {

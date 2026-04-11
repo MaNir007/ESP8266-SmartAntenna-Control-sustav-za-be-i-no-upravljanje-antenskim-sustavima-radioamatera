@@ -68,10 +68,11 @@
     padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-small);
-    background-color: var(--card-background);
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
     color: var(--text-color-dark);
     font-size: 1em;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
@@ -108,7 +109,9 @@
 
 /* Gumb za generiranje datoteke */
 .btn-generate {
-    background: linear-gradient(135deg, #d68910, #d68910);
+    background: linear-gradient(-45deg, #f39c12, #f1c40f, #e67e22);
+    background-size: 200% 200%;
+    animation: gradientBG 3s ease infinite;
     color: white;
     margin-top: 35px;
     width: 100%;
@@ -118,13 +121,15 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-radius: var(--border-radius);
-    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.25);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(243, 156, 18, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-generate:hover {
-    background: linear-gradient(135deg, #996107, #996107);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(40, 167, 69, 0.35);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
 }
 
 .btn-generate:active {
