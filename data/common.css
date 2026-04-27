@@ -45,6 +45,41 @@
     --secondary-color-rgb: 39, 174, 96; 
 }
 
+/* --- Dark Mode Variables --- */
+body.dark-mode {
+    --primary-color: #5dade2; 
+    --secondary-color: #2ecc71; 
+    --tertiary-color: #e74c3c; 
+    --background-light: #161b22; 
+    --background-dark: #0d1117; 
+    --card-background: rgba(33, 38, 45, 0.85);
+    --text-color-dark: #c9d1d9; 
+    --text-color-light: #8b949e; 
+    --border-color: #30363d;
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.4); 
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.6); 
+}
+
+body.dark-mode .custom-modal-box {
+    background: rgba(33, 38, 45, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    border-color: #30363d;
+}
+
+body.dark-mode table th {
+    background-color: #161b22;
+    color: #c9d1d9;
+}
+
+body.dark-mode table td {
+    border-bottom-color: #30363d;
+}
+
 
     body {
     font-family: 'Roboto', sans-serif;
@@ -456,4 +491,175 @@ footer a:hover {
         padding: 10px 15px;
         font-size: 0.85em;
     }
+}
+
+/* --------------------------------------------------------------------------- */
+/* Custom Modal Notifications (Glassmorphism, Animations)                      */
+/* --------------------------------------------------------------------------- */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    animation: modalFadeIn 0.3s forwards ease-out;
+}
+
+.custom-modal-box {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    transform: scale(0.8) translateY(30px);
+    animation: modalPopUp 0.4s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-modal-box h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.custom-modal-box p {
+    color: var(--text-color-dark);
+    font-size: 1.1em;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.custom-modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.custom-modal-buttons button {
+    margin: 0;
+    min-width: 110px;
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes modalPopUp {
+    from { transform: scale(0.8) translateY(30px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes modalPopDown {
+    from { transform: scale(1) translateY(0); opacity: 1; }
+    to { transform: scale(0.9) translateY(20px); opacity: 0; }
+}
+
+.custom-modal-overlay.closing {
+    animation: modalFadeOut 0.3s forwards ease-in;
+}
+
+.custom-modal-overlay.closing .custom-modal-box {
+    animation: modalPopDown 0.3s forwards ease-in;
+}
+
+/* --------------------------------------------------------------------------- */
+/* Toast Notifications (Floating)                                              */
+/* --------------------------------------------------------------------------- */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10000;
+}
+
+.toast {
+    background-color: var(--card-background);
+    color: var(--text-color-dark);
+    border-radius: var(--border-radius-small);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95em;
+    font-weight: 500;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    border-left: 5px solid var(--primary-color);
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+body.dark-mode .toast {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.toast-success { border-left-color: var(--success-color); }
+.toast-error { border-left-color: var(--error-color); }
+.toast-warning { border-left-color: var(--warning-color); }
+.toast-info { border-left-color: var(--info-color); }
+
+.toast-icon {
+    font-size: 1.2em;
+}
+.toast-success .toast-icon { color: var(--success-color); }
+.toast-error .toast-icon { color: var(--error-color); }
+.toast-warning .toast-icon { color: var(--warning-color); }
+.toast-info .toast-icon { color: var(--info-color); }
+
+/* Dark Mode Floating Toggle Button */
+.theme-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    color: var(--text-color-dark);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-light);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
 }

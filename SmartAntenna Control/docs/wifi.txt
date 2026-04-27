@@ -1,8 +1,0 @@
-const char* WIFI_SSID = "Speedport-954854";
-const char* WIFI_PASSWORD = "ffnkp35u8sxffe4m";
-
-const char* WIFI_SSID = "HTEronet_81D0";
-const char* WIFI_PASSWORD = "b7W4ARc3Va3WY";
-
-const char* WIFI_SSID = "marin";
-const char* WIFI_PASSWORD = "hamantrot";

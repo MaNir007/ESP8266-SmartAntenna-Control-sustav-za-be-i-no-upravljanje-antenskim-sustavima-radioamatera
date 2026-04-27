@@ -140,7 +140,7 @@ async function getServoAngle() {
 // Kalibracija servo (stepper) motora - postavlja trenutni položaj na 0°
 // ---------------------------------------------------------------------------
 async function calibrateServo() {
-    if (confirm("Antena je usmjerena točno na SJEVER (0°)? Potvrdite za resetiranje brojača koraka.")) {
+    if (await customConfirm("Antena je usmjerena točno na SJEVER (0°)? Potvrdite za resetiranje brojača koraka.", "<i class='fas fa-compass'></i> Kalibracija Kompasa")) {
         try {
             await sendHttpRequest('/api/calibrate_servo', 'POST');
             if (typeof showFormMessage === 'function') showFormMessage('Pozicija 0° postavljena!', 'success');

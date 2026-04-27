@@ -71,21 +71,6 @@ async function onLoadLogger() {
         });
     }
 
-    const clearAllLogsBtn = document.querySelector('.table-footer .button.tertiary[aria-label="Obriši sve logove"]');
-    if (clearAllLogsBtn) {
-        clearAllLogsBtn.addEventListener('click', confirmClearAllLogs);
-    }
-
-    const exportADIFBtn = document.querySelector('.table-footer .button.secondary[aria-label="Izvezi sve logove u ADIF format"]');
-    if (exportADIFBtn) {
-        exportADIFBtn.addEventListener('click', exportToADIF);
-    }
-
-    const exportCSVBtn = document.querySelector('.table-footer .button[aria-label="Izvezi sve logove u CSV format"]');
-    if (exportCSVBtn) {
-        exportCSVBtn.addEventListener('click', exportToCSV);
-    }
-
     const modulationSelect = document.getElementById('modulation');
     if (modulationSelect) {
         modulationSelect.addEventListener('change', updateRSTDefault);
@@ -393,7 +378,7 @@ function showLoadingIndicator(show) {
 // ---------------------------------------------------------------------------
 async function confirmDeleteLog(index) {
     if (index >= 0 && index < radioLogs.length) {
-        if (confirm(`Jeste li sigurni da želite obrisati log za "${radioLogs[index].callsign || 'ovu pozivnu oznaku'}"?`)) {
+        if (await customConfirm(`Jeste li sigurni da želite obrisati log za "${radioLogs[index].callsign || 'ovu pozivnu oznaku'}"?`, "<i class='fas fa-trash'></i> Brisanje loga")) {
             try {
                 await sendHttpRequest(`/delete_log?index=${index}`, 'GET'); 
                 showFormMessage('Log uspješno obrisan!', 'success');
@@ -417,7 +402,7 @@ async function confirmClearAllLogs() {
         showFormMessage('Nema logova za brisanje.', 'warning');
         return;
     }
-    if (confirm("Jeste li sigurni da želite obrisati SVE radio logove? Ova radnja je nepovratna!")) {
+    if (await customConfirm("Jeste li sigurni da želite obrisati SVE radio logove? Ova radnja je nepovratna!", "<i class='fas fa-exclamation-triangle'></i> Brisanje svih logova")) {
         try {
             await sendHttpRequest('/clear_all_logs', 'GET'); 
             showFormMessage('Svi logovi su uspješno obrisani!', 'success');
@@ -645,7 +630,7 @@ function handleCallsignRealtime(rawCall) {
 // ---------------------------------------------------------------------------
 // Otvara QRZ.com stranicu s detaljima o pozivnoj oznaci
 // ---------------------------------------------------------------------------
-function openQrz() {
+async function openQrz() {
     const callsignInput = document.getElementById('callsign');
     
     if (callsignInput && callsignInput.value.trim() !== "") {
@@ -654,7 +639,7 @@ function openQrz() {
         
         window.open(url, '_blank');
     } else {
-        alert("Molimo unesite pozivnu oznaku.");
+        await customAlert("Molimo unesite pozivnu oznaku.", "<i class='fas fa-info-circle'></i> Provjera QRZ.com");
     }
 }
 

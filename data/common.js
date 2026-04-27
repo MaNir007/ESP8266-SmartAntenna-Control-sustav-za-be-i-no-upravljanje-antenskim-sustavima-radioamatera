@@ -100,20 +100,39 @@ function updateConnectionStatus(status) {
 // Prikazuje poruku (toast notification) korisniku
 // ---------------------------------------------------------------------------
 function showFormMessage(message, type, timeout = 3000) {
-    const formMessage = document.getElementById('formMessage');
-    if (formMessage) {
-        formMessage.textContent = message;
-        formMessage.className = `message-area show ${type}`;
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let icon = '<i class="fas fa-info-circle"></i>';
+    if(type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+    if(type === 'error') icon = '<i class="fas fa-times-circle"></i>';
+    if(type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
 
-        if (formMessage.timeoutId) {
-            clearTimeout(formMessage.timeoutId);
-        }
-
-        if (timeout > 0) {
-            formMessage.timeoutId = setTimeout(() => {
-                formMessage.classList.remove('show');
-            }, timeout);
-        }
+    toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-message">${message}</div>`;
+    
+    container.appendChild(toast);
+    
+    // Provocira reflow za animaciju
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    
+    if (timeout > 0) {
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (container.contains(toast)) {
+                    container.removeChild(toast);
+                }
+            }, 300);
+        }, timeout);
     }
 }
 
@@ -161,3 +180,93 @@ window.updateConnectionStatus = updateConnectionStatus;
 window.showFormMessage = showFormMessage;
 window.downloadFile = downloadFile;
 window.calculateQthLocator = calculateQthLocator;
+
+// ---------------------------------------------------------------------------
+// Custom Modal Notifications (Glassmorphism & Animated)
+// ---------------------------------------------------------------------------
+function createModal(title, message, type = 'alert') {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
+        
+        const box = document.createElement('div');
+        box.className = 'custom-modal-box';
+        
+        const heading = document.createElement('h3');
+        heading.innerHTML = title;
+        
+        const text = document.createElement('p');
+        text.innerHTML = message;
+        
+        const btnContainer = document.createElement('div');
+        btnContainer.className = 'custom-modal-buttons';
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'button primary';
+        closeBtn.innerHTML = type === 'confirm' ? '<i class="fas fa-check"></i> Potvrdi' : '<i class="fas fa-check"></i> OK';
+        
+        let cancelBtn = null;
+        if (type === 'confirm') {
+            cancelBtn = document.createElement('button');
+            cancelBtn.className = 'button tertiary';
+            cancelBtn.innerHTML = '<i class="fas fa-times"></i> Odustani';
+        }
+
+        const closeModal = (result) => {
+            overlay.classList.add('closing');
+            setTimeout(() => {
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
+                resolve(result);
+            }, 300); // Wait for the modalFadeOut and modalPopDown transition
+        };
+
+        closeBtn.onclick = () => closeModal(true);
+        if (cancelBtn) {
+            cancelBtn.onclick = () => closeModal(false);
+            btnContainer.appendChild(closeBtn);
+            btnContainer.appendChild(cancelBtn);
+        } else {
+            btnContainer.appendChild(closeBtn);
+        }
+
+        box.appendChild(heading);
+        box.appendChild(text);
+        box.appendChild(btnContainer);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => closeBtn.focus(), 100);
+    });
+}
+
+window.customAlert = function(message, title = '<i class="fas fa-info-circle"></i> Obavijest') {
+    return createModal(title, message, 'alert');
+};
+
+window.customConfirm = function(message, title = '<i class="fas fa-question-circle"></i> Potvrda') {
+    return createModal(title, message, 'confirm');
+};
+
+// ---------------------------------------------------------------------------
+// Dark Mode Toggle
+// ---------------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Dark Mode
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
+    const themeToggleBtn = document.createElement('button');
+    themeToggleBtn.className = 'theme-toggle-btn';
+    themeToggleBtn.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    themeToggleBtn.onclick = () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    };
+    document.body.appendChild(themeToggleBtn);
+});
