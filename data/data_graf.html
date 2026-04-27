@@ -26,7 +26,8 @@
             <p class="current-time">Status veze: <span id="connectionStatus" class="status-connecting"><i class="fas fa-circle-notch fa-spin"></i> Povezivanje...</span></p>
         </header>
 
-        <div class="cards">
+        <main>
+            <section class="cards">
             <div class="card">
                 <h3>Temperatura</h3>
                 <p id="temp-val">-- °C</p>
@@ -35,11 +36,12 @@
                 <h3>Vlaga</h3>
                 <p id="hum-val">-- %</p>
             </div>
-        </div>
+            </section>
 
-        <div class="chart-wrapper">
+        <section class="chart-wrapper">
             <canvas id="sensorChart"></canvas>
-        </div>
+        </section>
+        </main>
 
         <footer>
             <div class="footer-content">
