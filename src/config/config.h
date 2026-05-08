@@ -40,8 +40,8 @@ const int STEPS_PER_REV = 2048;
 // WiFi PODACI
 // ---------------------------------------------------------------------------
 
-const char* const WIFI_SSID = "Speedport-954854";
-const char* const WIFI_PASSWORD = "ffnkp35u8sxffe4m";
+const char* const WIFI_SSID = "marin";
+const char* const WIFI_PASSWORD = "hamantrot";
 
 // ---------------------------------------------------------------------------
 // NTP KONFIGURACIJA
