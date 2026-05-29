@@ -1,0 +1,164 @@
+================================================================================
+           ESP8266 SMARTANTENNA CONTROL SYSTEM - STRUKTURA PROJEKTA
+================================================================================
+
+Ova datoteka sadrži grafički prikaz strukture projekta (Software Architecture)
+te pripremljene natuknice i opise za prezentaciju završnog rada.
+
+--------------------------------------------------------------------------------
+1. DIJAGRAM STRUKTURE PROJEKTA
+--------------------------------------------------------------------------------
+
+ESP8266-SmartAntenna-Control/
+│
+├── platformio.ini         # Konfiguracijska datoteka za PlatformIO (definicija biblioteka i okruženja)
+├── README.md              # Glavna dokumentacija projekta
+├── git_update.bat         # Pomoćna skripta za automatsku sinkronizaciju s Git repozitorijem
+├── .gitignore             # Popis datoteka i direktorija koje Git sustav zanemaruje
+│
+├── data/                  # Web sučelje (datoteke koje se učitavaju na ESP8266 preko LittleFS-a)
+│   ├── index.html         # Glavna upravljačka ploča (Dashboard) za kontrolu antene i očitanje senzora
+│   ├── index.css / .js    # Stilovi i interaktivna logika glavne upravljačke ploče
+│   ├── logger.html        # Sučelje naprednog radioamaterskog QSO dnevnika (QSO Logger)
+│   ├── logger.css / .js   # Stilovi i logika dnevnika (DXCC prefix lookup, integracija s QRZ.com)
+│   ├── data_graf.html     # Stranica za prikaz telemetrijskih podataka i grafova povijesti senzora
+│   ├── data_graf.css/.js  # Stilovi i dinamičko renderiranje grafova temperature i vlažnosti
+│   ├── edi_export.html    # Sučelje za konfiguraciju i izvoz QSO podataka u natjecateljske formate
+│   ├── edi_export.css/.js # Stilovi i logika za izvoz u standarde (EDI, ADIF, CSV)
+│   ├── common.css / .js   # Zajednički CSS stilovi i mrežne JavaScript funkcije (REST API pozivi)
+│   ├── style.css          # Glavni CSS stilovi cijelog web projekta
+│   ├── prefixes.json      # Lokalna baza DXCC prefiksa za prepoznavanje država u realnom vremenu
+│   └── icon.png           # Logotip i ikona aplikacije
+│
+├── include/               # Standardni PlatformIO direktorij za zaglavlja (nije korišten u ovom projektu)
+├── lib/                   # Standardni PlatformIO direktorij za lokalne C++ biblioteke
+├── test/                  # Direktorij za testiranje i dijagnostiku softvera
+│
+├── src/                   # C++ izvorni kod (firmware koji se izvodi na ESP8266 mikrokontroleru)
+│   ├── main.cpp           # Ulazna točka firmwarea (inicijalizacija sustava i glavna petlja - setup & loop)
+│   │
+│   ├── antenna/           # Modul za hardversko upravljanje antenama
+│   │   ├── antenna_control.cpp  # Implementacija upravljanja stepper motorom (kut) i relejima
+│   │   └── antenna_control.h    # Definicije pinova, brzina, koraka i sučelja modula
+│   │
+│   ├── common/            # Pomoćne strukture i globalne definicije
+│   │   ├── common_functions.h  # Pomoćne funkcije (pretvorbe koordinata, matematički izračuni)
+│   │   └── common_types.h      # Globalne strukture podataka (npr. QSO struktura, SensorData)
+│   │
+│   ├── config/            # Globalna konfiguracija sustava
+│   │   └── config.h       # Postavke WiFi mreže, hardverskih pinova i kalibracijskih parametara
+│   │
+│   ├── filesystem/        # Modul za rad s memorijom (LittleFS)
+│   │   ├── fs_utils.cpp   # Implementacija spremanja/čitanja konfiguracija i QSO zapisa u JSON formatu
+│   │   └── fs_utils.h     # Deklaracije funkcija za rad s datotekama na flash memoriji
+│   │
+│   ├── logger/            # Modul za upravljanje radioamaterskim dnevnikom (QSO database)
+│   │   ├── log_manager.cpp# Upravljanje bazom logova, pretraga i serijski ispis u boji (ANSI konzola)
+│   │   └── log_manager.h  # Sučelje za dodavanje, brisanje i pretraživanje QSO kontakata
+│   │
+│   ├── sensors/           # Modul za upravljanje senzorima i GPS pozicioniranjem
+│   │   ├── sensor_manager.cpp # Čitanje temperature/vlage (DHT22) i dekodiranje GPS-a (NEO-6M)
+│   │   └── sensor_manager.h   # Sučelje za povlačenje najnovijih senzorskih očitanja
+│   │
+│   ├── time/              # Modul za sinkronizaciju vremena
+│   │   ├── time_sync.cpp  # Sinkronizacija točnog UTC vremena preko NTP poslužitelja ili GPS modula
+│   │   └── time_sync.h    # Deklaracije funkcija za precizno mjerenje vremena
+│   │
+│   ├── web/               # Modul za mrežnu komunikaciju (REST API i Web Server)
+│   │   ├── web_server.cpp # Postavljanje endpointa za komunikaciju sa web sučeljem i LittleFS-om
+│   │   └── web_server.h   # Upravljanje HTTP zahtjevima i slanje JSON odgovora klijentu
+│   │
+│   └── wifi/              # Modul za bežično povezivanje
+│       ├── wifi_manager.cpp # Upravljanje WiFi vezom, spajanje na mrežu i praćenje statusa
+│       └── wifi_manager.h   # Sučelje za mrežnu povezivost
+│
+└── SmartAntenna Control/  # Dodatni resursi projekta
+    ├── docs/              # Službene sheme uređaja, slike i dokumentacija završnog rada
+    └── scripts/           # Razvojne skripte (npr. automatsko kreiranje strukture)
+
+================================================================================
+2. MATERIJALI ZA PREZENTACIJU ZAVRŠNOG RADA (PREPARATION SLIDES)
+================================================================================
+
+Slajd 1: Naslov
+--------------------------------------------------------------------------------
+* NASLOV: ESP8266 SmartAntenna Control - Sustav za bežično upravljanje antenskim
+  sustavima i praćenje okolišnih uvjeta
+* KANDIDAT: Marin Šupljika
+* MENTOR: [Ime Mentora]
+* OPIS: Razvoj integriranog, jeftinog i autonomnog mikrokontrolerskog sustava za 
+  radioamatere koji objedinjuje hardversku kontrolu rotacije antene, prebacivanje 
+  antenskih signala, telemetrijski nadzor i profesionalni radio dnevnik.
+
+Slajd 2: Problem i Motivacija
+--------------------------------------------------------------------------------
+* Ručno usmjeravanje antena (npr. Yagi) na antenskom stupu je nepraktično i sporo.
+* Nedostatak cjelovitih rješenja koja na jednom mjestu povezuju:
+  - Hardver (precizna kontrola kuta usmjerenja antene pomoću koračnog motora).
+  - Telemetriju (praćenje temperature, vlage i napona napajanja na stupu/kutiji).
+  - Softver (upravljanje preko mobilnog uređaja ili računala bez instalacije aplikacija).
+  - Logiranje (QSO radioamaterski dnevnik koji olakšava unos i izvoz podataka).
+
+Slajd 3: Hardverska Arhitektura (Uređaj)
+--------------------------------------------------------------------------------
+* Mikrokontroler: NodeMCU ESP8266 - jeftin, moćan, s ugrađenim Wi-Fi modulom.
+* Upravljanje motorom: 28BYJ-48 koračni motor s ULN2003 driverom za visoku 
+  preciznost usmjeravanja antene (2048 koraka po punom krugu).
+* Prekapčanje antena: Relejni modul za trenutačni odabir aktivne antene (npr. žičani dipol ili usmjerena Yagi).
+* Okolišni senzori: DHT22 za precizno mjerenje temperature i vlažnosti zraka na poziciji antene.
+* Pozicioniranje i vrijeme: NEO-6M GPS modul za automatsko određivanje lokacije (QTH lokator) i preciznu sinkronizaciju vremena.
+
+Slajd 4: Softverska Arhitektura (Firmware)
+--------------------------------------------------------------------------------
+* Razvojno okruženje: VS Code s PlatformIO IDE-om (C++ / Arduino framework).
+* Modularnost koda: Svaka komponenta sustava je izolirana u vlastitu klasu/modul:
+  - 'antenna_control' za precizne pomake i izbor antene.
+  - 'sensor_manager' i 'time_sync' za akviziciju podataka i GPS dekodiranje.
+  - 'fs_utils' za trajno spremanje logova na memoriju ESP8266 pomoću LittleFS-a.
+  - 'web_server' i REST API koji omogućuju asinkronu JSON komunikaciju s klijentima.
+
+Slajd 5: Web Korisničko Sučelje (Web UI)
+--------------------------------------------------------------------------------
+* Responzivan dizajn (HTML5, CSS3, JavaScript) spremljen izravno u flash memoriju (LittleFS).
+* Učitavanje web stranice izravno s ESP8266 bez potrebe za internetom.
+* Glavne cjeline web sučelja:
+  - Dashboard: Vizualni kompas za usmjeravanje i prikaz telemetrije u realnom vremenu.
+  - QSO Logger: Napredni radio dnevnik s automatskim prepoznavanjem država prema prefiksu pozivne oznake i izračunom QTH lokatora.
+  - Contest Export: Podrška za izvoz dnevnika u profesionalne formate (.adif za eQSL/LoTW i .edi za VHF/UHF natjecanja).
+  - Sensor History: Interaktivni grafički prikaz promjene temperature i vlage u zadnjih 24 sata.
+
+Slajd 6: Zaključak i Budući Rad
+--------------------------------------------------------------------------------
+* Uspješno je realiziran funkcionalan, pouzdan i ekonomičan prototip sustava.
+* Omogućena je potpuna kontrola antenskog sustava s bilo kojeg uređaja s Wi-Fi vezom.
+* Sustav olakšava rad radioamaterima tijekom svakodnevnog rada i u natjecanjima.
+* Budući razvoj:
+  - Implementacija WiFiManager-a za jednostavnije povezivanje na nove mreže.
+  - Integracija MQTT protokola za pametnu kuću (Home Assistant).
+  - Dodavanje hardverskog vatmetra i SWR metra za mjerenje snage predajnika.
+================================================================================
+3. PRIJEDLOZI ZA NADOPUNU SLAJDA "STRUKTURA PROJEKTA"
+================================================================================
+
+Ovdje su tri opcije koje možete kopirati i zalijepiti izravno na Vaš slajd 
+"Struktura projekta" kako biste popunili prazan prostor i zaokružili cjelinu:
+
+Opcija A: JavaScript logika (fokus na interaktivnost i asinkroni rad)
+--------------------------------------------------------------------------------
+JavaScript logika (.js / Asinkroni AJAX): Klijentska logika zadužena za 
+dinamičko osvježavanje sučelja u realnom vremenu (kut kompasa, telemetrija, 
+tablica logova) putem fetch API-ja, eliminirajući potrebu za ponovnim 
+učitavanjem stranica.
+
+Opcija B: REST API i JSON (fokus na komunikaciju između frontenda i backenda)
+--------------------------------------------------------------------------------
+REST API & JSON komunikacija: Standardizirani kanal za razmjenu informacija 
+između klijentskog preglednika i mikrokontrolera. Omogućuje lagan, siguran 
+i brz prijenos podataka o senzorima, motoru i QSO kontaktima u strukturiranom obliku.
+
+Opcija C: DXCC Prefiksi (fokus na bazu podataka prefixes.json)
+--------------------------------------------------------------------------------
+DXCC prefiksi (prefixes.json): Lokalna statička baza podataka spremljena na 
+flash memoriju koja omogućuje trenutačno, izvanmrežno (offline) prepoznavanje 
+država i prikaz zastava izravno na temelju unesenog pozivnog znaka u dnevniku.
+================================================================================
